@@ -17,6 +17,9 @@
         },
         {
             "path": "./packages/core/ts-utils"
+        },
+        {
+            "path": "./packages/core/js-utils"
         }
     ]
 }
