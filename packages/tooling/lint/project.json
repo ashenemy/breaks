@@ -28,6 +28,28 @@
                 "forwardAllArgs": true
             },
             "cache": false
+        },
+        "generate": {
+            "executor": "nx:run-commands",
+            "dependsOn": ["build"],
+            "options": {
+                "command": "node packages/tooling/lint/dist/cli/generate.js",
+                "cwd": "{workspaceRoot}"
+            },
+            "cache": false
+        },
+        "postinstall": {
+            "executor": "nx:run-commands",
+            "dependsOn": ["build"],
+            "options": {
+                "commands": [
+                    "node packages/tooling/lint/dist/cli/generate.js",
+                    "node packages/tooling/lint/dist/cli/hook.js install"
+                ],
+                "cwd": "{workspaceRoot}",
+                "parallel": false
+            },
+            "cache": false
         }
     }
 }
