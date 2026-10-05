@@ -9,9 +9,9 @@
 | Поле | Значение |
 |---|---|
 | Задача | E00.03.02 — `core/config`: `defineModuleConfig`, валидация Zod, ошибки старта (см. `docs/epics/E00.03-config-module.md`) |
-| Ветка | `autopilot/E00.03.02` (создать от `main`) |
-| Подшаги | не спланированы |
-| Следующее действие | Спланировать подшаги: токен `defineModuleConfig(name, schema)` (zod 4.6.5 точной версией в `packages/core/config/package.json`), `loadModuleConfig(token)` поверх `ConfigLoader` — читает только `tree.modules.<name>`, тест «модуль не читает чужой раздел», ошибки старта с именем модуля, ключом и ожидаемым типом (`ConfigError`). Приёмка `nx test core-config --testPathPattern=define`. Параллельно готовы E00.01.03b–d (генераторы приложений) |
+| Ветка | `autopilot/E00.03.02` |
+| Подшаги | 1 ⏳ `zod` 4.6.5 в пакете; `ModuleConfigToken`/`defineModuleConfig(name, schema)`: имя в camelCase (A-018), путь `modules.<name>`, `envVariable(...keys)` (обратное отображение `camelCase` → `UPPER_SNAKE`); 2 `ModuleConfigReader(loadedConfig).read(token)`: только `tree.modules.<name>` (нет раздела — `{}`), `safeParse` с локалью `ru` без глобального `z.config`, `ConfigValidationError extends ConfigError` (модуль, ключ, ожидаемый тип, подсказка с именем переменной для отсутствующего ключа), кэш по токену, заморозка; `loadModuleConfig(token, options?)`; тесты `test/lib/define-module-config.spec.ts`, README, журнал |
+| Следующее действие | Подшаг 1: добавить `zod`, написать `src/lib/define-module-config.ts` и тесты токена (красные), реализовать. Параллельно готовы E00.01.03b–d (генераторы приложений) |
 
 ## Разбиение задач (`progress split`)
 
