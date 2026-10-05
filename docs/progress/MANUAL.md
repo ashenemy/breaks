@@ -36,4 +36,4 @@ E00.01.03 (вес 5) разбита по протоколу (размер бол
 | E00.01.03c | todo | — | — |
 | E00.01.03d | todo | — | — |
 | E00.01.03e | todo | — | — |
-| E00.01.04 | todo | — | Зависимость: E00.01.03a |
+| E00.01.04 | done | `e6888e2` | Приёмка: `nx affected -t lint test build --base=HEAD~1` — код 0; `pnpm check:generated`, `pnpm test:tools` (45 тестов) — код 0. README корня: раздел «Работа с репозиторием» |
