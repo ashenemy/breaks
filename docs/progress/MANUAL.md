@@ -9,9 +9,9 @@
 | Поле | Значение |
 |---|---|
 | Задача | E00.03.04 — `core/config`: интеграция с Nest (`ConfigModule.forModule(token)`) (см. `docs/epics/E00.03-config-module.md`) |
-| Ветка | `autopilot/E00.03.04` (создать от `main`) |
-| Подшаги | не спланированы |
-| Следующее действие | Зафиксировать версии NestJS (`@nestjs/common`, `@nestjs/core`, `@nestjs/testing`, `reflect-metadata`, `rxjs`) в ADR-0002 точными версиями (E00.01.03b переиспользует), спланировать подшаги: `ConfigModule.forRoot(options?)` — один `LoadedConfig` и `ModuleConfigReader` на приложение; `ConfigModule.forModule(token)` — провайдер раздела по токену (инъекция через `@InjectModuleConfig(token)` или сам токен как DI-ключ); ошибка валидации останавливает старт приложения. Приёмка `nx test core-config --testPathPattern=nest`. Параллельно готовы E00.01.03b–d |
+| Ветка | `autopilot/E00.03.04` |
+| Подшаги | 1 ⏳ NestJS 12.1.2 (`@nestjs/common`, `@nestjs/core`, `@nestjs/testing`), `reflect-metadata` 0.2.2, `rxjs` 7.8.2 в ADR-0002 и `package.json` пакета; `experimentalDecorators` в tsconfig пакета; `injectionToken` (Symbol) у `ModuleConfigToken`; 2 `ConfigModule.forRoot(options?)` (глобально: `LOADED_CONFIG`, `MODULE_CONFIG_READER`), `ConfigModule.forModule(...tokens)` (провайдер раздела по `token.injectionToken`), декоратор `InjectModuleConfig(token)`; ошибка конфига валит `compile()`/старт; тесты `test/lib/nest-config-module.spec.ts`, README, журнал |
+| Следующее действие | Подшаг 1: зависимости и tsconfig, затем тесты Nest (красные) и реализация. Приёмка `nx test core-config --testPathPattern=nest`. Параллельно готовы E00.01.03b–d |
 
 ## Разбиение задач (`progress split`)
 
