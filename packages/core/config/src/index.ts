@@ -14,6 +14,7 @@ export type {
     TomlLayerResult,
 } from './@types/index.js';
 export { ConfigError } from './lib/config-error.js';
+export { CONFIG_DIRECTORY, ConfigLoader, DEFAULT_LAYER_FILE, DOTENV_FILE, loadConfig } from './lib/config-loader.js';
 export { DotenvFile, mergeEnv } from './lib/dotenv.js';
 export {
     coerceEnvValue,
