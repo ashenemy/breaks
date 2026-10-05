@@ -26,8 +26,16 @@
 | ESLint | 10.12.0 | Flat config; `@nx/eslint` и `@nx/eslint-plugin` 23.2.1 |
 | `@eslint/js` | 10.0.1 | ESLint 10 не тянет его как зависимость, а `@nx/eslint-plugin` требует неявно, поэтому пакет закреплён в корне |
 | typescript-eslint | 8.71.0 | Поддерживает TypeScript `<6.1` и ESLint 10 |
-| Vitest | 5.0.3 | С `@vitest/coverage-v8` 5.0.3 и `vite` 8.3.2 (peer) |
 | `@types/node` | 24.19.1 | Линия Node 24 |
+
+### Зафиксировано в E00.01.03a
+
+| Инструмент | Версия | Примечание |
+|---|---|---|
+| Vitest | 4.1.11 | С `@vitest/coverage-v8` 4.1.11 и `vite` 8.3.2 (peer). В E00.01.02 был взят 5.0.3, но `@nx/vitest@23.2.1` поддерживает только `^3 \|\| ^4` (A-011); переход на 5.x — отдельной задачей вместе с обновлением Nx |
+| `@nx/plugin`, `@nx/vitest`, `@nx/devkit` | 23.2.1 | Плагин генераторов, инференс и конфигурация Vitest, API генераторов |
+| `@swc-node/register`, `@swc/core` | 1.11.1, 1.15.47 | Nx загружает TypeScript локальных плагинов на лету |
+| `jsonc-eslint-parser` | 2.4.2 | Правила `@nx/dependency-checks` и `@nx/nx-plugin-checks` для `package.json` и `generators.json` |
 
 ### Фиксируются при первом подключении (в соответствующих эпиках)
 
@@ -46,7 +54,7 @@
 1. `pnpm-lock.yaml` обязателен и коммитится; установка в CI только `--frozen-lockfile`.
 2. Все зависимости пинятся точно (`.npmrc`: `save-exact=true`); диапазоны `^`/`~` запрещены.
 3. `engine-strict=true`: установка с неподходящими Node или pnpm завершается ошибкой.
-4. Скрипты сборки зависимостей запрещены, кроме allow-list `allowBuilds` в `pnpm-workspace.yaml` (сейчас только `nx`).
+4. Скрипты сборки зависимостей запрещены, кроме allow-list `allowBuilds` в `pnpm-workspace.yaml` (сейчас только `nx`). Пакеты с готовыми бинарниками, чьи скрипты осознанно не выполняются, записываются там же со значением `false` (`@parcel/watcher`, `unrs-resolver`, `@swc/core`).
 5. Обновление версий выполняется отдельной задачей через `nx migrate` (для Nx и плагинов) или явным изменением `package.json`; одновременно обновляется таблица выше.
 6. Npm-scope рабочего пространства: `@market` (корневой пакет `@market/source`).
 

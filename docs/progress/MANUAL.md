@@ -8,10 +8,22 @@
 
 | Поле | Значение |
 |---|---|
-| Задача | E00.01.03 — Кастомные генераторы-обёртки над официальными плагинами Nx (lib, nest-app, angular-app, nativescript-app, module) |
-| Ветка | `autopilot/E00.01.03` |
+| Задача | E00.01.03b — Генератор `nest-app` (обёртка `@nx/nest:application`), фиксация NestJS в ADR-0002 |
+| Ветка | `autopilot/E00.01.03b` |
 | Подшаги | не спланированы |
 | Следующее действие | Спланировать подшаги (3–8), создать ветку |
+
+## Разбиение задач (`progress split`)
+
+E00.01.03 (вес 5) разбита по протоколу (размер больше ~400 строк, разные плагины Nx и фиксация версий платформ). Приёмка каждой подзадачи: `nx test tooling-generators`. Зависимые задачи E00.01.04 и E00.02.01 требуют только генератор `lib`, поэтому их зависимость переносится на E00.01.03a.
+
+| Подзадача | Содержание | Scope | Вес | Зависимости |
+|---|---|---|---|---|
+| E00.01.03a | Плагин `tooling-generators` (`@market/tooling`), генератор `lib` над `@nx/js:library`: структура, теги, README, маркер, Vitest с порогом покрытия | `packages/tooling/generators` | 2 | E00.01.02 |
+| E00.01.03b | Генератор `nest-app` над `@nx/nest:application`; NestJS в ADR-0002 | `packages/tooling/generators` | 1 | E00.01.03a |
+| E00.01.03c | Генератор `angular-app` над `@nx/angular:application` (SSR); Angular и Tailwind в ADR-0002 | `packages/tooling/generators` | 1 | E00.01.03a |
+| E00.01.03d | Генератор `nativescript-app` над `@nativescript/nx:app`; NativeScript в ADR-0002 | `packages/tooling/generators` | 1 | E00.01.03a |
+| E00.01.03e | Генератор `module`: `modules/<name>/{api,web,native}` по выбору платформ и контрактный пакет | `packages/tooling/generators` | 1 | E00.01.03b, E00.01.03c, E00.01.03d |
 
 ## Журнал задач
 
@@ -19,5 +31,9 @@
 |---|---|---|---|
 | E00.01.01 | done | `ecd8518` | Приёмка: `nx graph --file=tmp/graph.json`, `nx run-many -t build --all --skip-nx-cache` — код 0. Допущения A-008, A-009; ADR-0002 |
 | E00.01.02 | done | `2be266b` | Приёмка: `pnpm test:boundaries` — 28 тестов, код 0; `nx run-many -t lint test build` — код 0. ADR-0014, допущение A-010 |
-| E00.01.03 | todo | — | — |
-| E00.01.04 | todo | — | — |
+| E00.01.03a | done | `84e523a` | Приёмка: `nx test tooling-generators` — 57 тестов, код 0; покрытие 100% строк, 97,8% веток; `nx run-many -t typecheck build lint test --all` — код 0. Сценарий `nx g @market/tooling:lib` проверен вживую. Допущения A-011, A-012, A-013 |
+| E00.01.03b | todo | — | — |
+| E00.01.03c | todo | — | — |
+| E00.01.03d | todo | — | — |
+| E00.01.03e | todo | — | — |
+| E00.01.04 | todo | — | Зависимость: E00.01.03a |
