@@ -7,5 +7,10 @@ autoInstallPeers: true
 
 # Цепочка поставок (E00.01, раздел 8): скрипты сборки зависимостей запрещены,
 # кроме явного allow-list. Новая запись добавляется отдельным коммитом с обоснованием.
+# `false` — скрипт осознанно не выполняется: пакет поставляет готовые бинарники
+# в optional-зависимостях, а postinstall лишь запасной путь сборки.
 allowBuilds:
   nx: true
+  "@parcel/watcher": false
+  unrs-resolver: false
+  "@swc/core": false

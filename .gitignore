@@ -62,3 +62,7 @@ Thumbs.db
 
 # Покрытие тестов
 coverage/
+
+# Vitest: временные файлы конфигов и отчёты
+vitest.config.*.timestamp*
+test-output/

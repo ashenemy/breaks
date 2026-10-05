@@ -19,7 +19,8 @@
             "!{projectRoot}/vitest.config.*",
             "!{projectRoot}/eslint.config.*",
             "!{projectRoot}/tsconfig.spec.json",
-            "!{projectRoot}/README.md"
+            "!{projectRoot}/README.md",
+            "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)"
         ],
         "sharedGlobals": [
             "{workspaceRoot}/tsconfig.base.json",
@@ -43,7 +44,10 @@
                 "default",
                 "^production"
             ],
-            "cache": true
+            "cache": true,
+            "dependsOn": [
+                "^build"
+            ]
         },
         "lint": {
             "inputs": [
@@ -63,6 +67,16 @@
                 "^production"
             ],
             "cache": true
+        },
+        "@nx/js:tsc": {
+            "cache": true,
+            "dependsOn": [
+                "^build"
+            ],
+            "inputs": [
+                "production",
+                "^production"
+            ]
         }
     },
     "plugins": [
@@ -84,6 +98,14 @@
             "plugin": "@nx/eslint/plugin",
             "options": {
                 "targetName": "lint"
+            }
+        },
+        {
+            "plugin": "@nx/vitest",
+            "options": {
+                "testTargetName": "test",
+                "ciTargetName": "test-ci",
+                "testMode": "run"
             }
         }
     ]
