@@ -1,15 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs';
 
-import { parse, type TomlTableWithoutBigInt } from 'smol-toml';
-
 import type { ConfigLayerInfo, ConfigLayerName, ConfigTree, TomlLayerResult } from '../@types/index.js';
 import { ConfigError } from './config-error.js';
-
-/**
- * Настройки парсера: целые числа только как `number` (деньги хранятся в минимальных единицах и помещаются
- * в безопасный диапазон), небезопасные ключи (`__proto__`, `constructor`) отвергаются до слияния слоёв.
- */
-const PARSE_OPTIONS = { integersAsBigInt: false, unsafeKeyBehaviour: 'throw' } as const;
+import { parseToml } from './toml.js';
 
 /** Один файл слоя `config/<name>.toml`: отсутствие файла даёт пустое дерево, ошибка разбора — `ConfigError`. */
 export class TomlLayer {
@@ -20,8 +13,7 @@ export class TomlLayer {
     /** Разбирает текст TOML; `source` подставляется в сообщение об ошибке. */
     public static parse(toml: string, source: string): ConfigTree {
         try {
-            const table: TomlTableWithoutBigInt = parse(toml, PARSE_OPTIONS);
-            return table;
+            return parseToml(toml);
         } catch (error) {
             const firstLine = (error as Error).message.replace(/\n[\s\S]*$/, '');
             throw new ConfigError([{ message: `разбор TOML: ${firstLine}`, path: '', source }]);
