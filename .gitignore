@@ -52,6 +52,9 @@ Thumbs.db
 .env.*
 !.env.example
 
+# core/config (E00.03): личный слой разработчика поверх default и <env>.
+config/local.toml
+
 # Инструмент прогресса: локальный контекст (docs/03-autopilot-protocol.md, 4.1)
 .progress/
 
