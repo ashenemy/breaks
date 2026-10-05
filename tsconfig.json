@@ -11,6 +11,9 @@
         },
         {
             "path": "./packages/tooling/lint-e2e"
+        },
+        {
+            "path": "./packages/core/config"
         }
     ]
 }
