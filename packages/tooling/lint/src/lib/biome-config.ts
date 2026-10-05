@@ -15,7 +15,7 @@ export type BiomeConfig = {
     javascript: { formatter: { quoteStyle: 'single' | 'double'; trailingCommas: 'all' | 'es5' | 'none' } };
     json: { formatter: { indentWidth: number } };
     linter: { enabled: true; rules: Record<string, Record<string, 'error' | 'warn' | 'off'>> };
-    vcs: { clientKind: 'git'; enabled: true; useIgnoreFile: true };
+    vcs: { clientKind: 'git'; enabled: false; useIgnoreFile: false };
 };
 
 /** Правила Biome, которыми `[overlap].biome` может быть включён, и их группы. */
@@ -77,6 +77,7 @@ export function buildBiomeConfig(rules: RulesConfig, biomeVersion: string): Biom
         javascript: { formatter: { quoteStyle: format.quotes, trailingCommas: format['trailing-commas'] } },
         json: { formatter: { indentWidth: format.indent } },
         linter: { enabled: true, rules: linterRules },
-        vcs: { clientKind: 'git', enabled: true, useIgnoreFile: true },
+        // Файлы отбирает раннер через git; интеграция Biome с VCS выключена, чтобы .gitignore не скрывал явно переданные файлы.
+        vcs: { clientKind: 'git', enabled: false, useIgnoreFile: false },
     };
 }

@@ -47,7 +47,7 @@ describe('buildBiomeConfig', () => {
         });
         expect(config.javascript.formatter).toEqual({ quoteStyle: 'single', trailingCommas: 'all' });
         expect(config.json.formatter.indentWidth).toBe(4);
-        expect(config.vcs).toEqual({ clientKind: 'git', enabled: true, useIgnoreFile: true });
+        expect(config.vcs).toEqual({ clientKind: 'git', enabled: false, useIgnoreFile: false });
     });
 
     it('включает только правила из [overlap].biome и сортировку импортов', () => {
