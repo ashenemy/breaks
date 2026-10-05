@@ -62,6 +62,7 @@ pnpm nx g @market/tooling:lib catalog-api --type=module --platform=api --scope=c
 | `pnpm nx run-many -t lint typecheck test build --all` | Все цели всех проектов (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` — по одной) |
 | `pnpm affected` | Только затронутые проекты относительно `main` (`--base`, `--head` переопределяют); есть `affected:lint`, `affected:test`, `affected:build`, `affected:typecheck` |
 | `pnpm nx test <проект> --coverage` | Тесты проекта с проверкой порога покрытия 90% |
+| `pnpm lint:run` | Линтинг и формат всего репозитория через `tooling-lint` (Biome + ESLint из `rules.toml`); `pnpm lint:fix` исправляет; `nx run tooling-lint:run --staged`, `--affected`, `--ci`, `--format-only` |
 | `pnpm test:boundaries` | Негативный и позитивный тест правил границ |
 | `pnpm check:generated` | Все проекты созданы генераторами (маркер в `project.json`) |
 | `pnpm test:tools` | Тесты корневых скриптов `tools/` |
@@ -72,6 +73,8 @@ pnpm nx g @market/tooling:lib catalog-api --type=module --platform=api --scope=c
 
 ### Коммиты и прогресс
 
+- Хуки git из `.githooks` ставятся при `pnpm install` (`core.hooksPath`): `pre-commit` линтит и форматирует застейдженные файлы, `commit-msg` проверяет формат сообщения и что файлы принадлежат одному проекту Nx, `pre-push` гоняет `typecheck` и `test` затронутых проектов. Обход хуков запрещён.
+- Правила кода — только в `packages/tooling/lint/rules.toml`; `biome.json` и `eslint.config.mjs` генерируются из него (`pnpm lint:generate`) и не хранятся в git.
 - Ветка задачи `autopilot/<task-id>`, в `main` вливается fast-forward после приёмки.
 - Один коммит — один проект Nx: `<icon> <type>: <rootScope>/<moduleScope>: <message>`, в теле `Task: <id>` и `Substep: <n>` (`docs/02-code-conventions.md`, раздел 9).
 - Состояние задач до появления `tooling/progress`: `docs/progress/MANUAL.md`.
