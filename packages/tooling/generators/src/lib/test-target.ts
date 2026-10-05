@@ -1,4 +1,4 @@
-import { readProjectConfiguration, updateProjectConfiguration, type TargetConfiguration, type Tree } from '@nx/devkit';
+import { readProjectConfiguration, type TargetConfiguration, type Tree, updateProjectConfiguration } from '@nx/devkit';
 
 import { VITEST_EXECUTOR } from './constants';
 

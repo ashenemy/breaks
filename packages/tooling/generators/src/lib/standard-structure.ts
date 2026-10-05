@@ -1,4 +1,4 @@
-import { generateFiles, joinPathFragments, offsetFromRoot, updateJson, type Tree } from '@nx/devkit';
+import { generateFiles, joinPathFragments, offsetFromRoot, type Tree, updateJson } from '@nx/devkit';
 
 import type { LibTemplateSubstitutions, NormalizedLibOptions } from '../@types';
 import { COVERAGE_THRESHOLD, LIB_GENERATOR } from './constants';
@@ -22,7 +22,12 @@ type TsConfigSpec = {
 export function applyStandardStructure(tree: Tree, options: NormalizedLibOptions, templatesDir: string): void {
     const { directory, fileName, projectName } = options;
 
-    for (const relativePath of [...REPLACED_FILES, `src/lib/${projectName}.spec.ts`, `src/lib/${projectName}.ts`, `src/lib/${fileName}.spec.ts`]) {
+    for (const relativePath of [
+        ...REPLACED_FILES,
+        `src/lib/${projectName}.spec.ts`,
+        `src/lib/${projectName}.ts`,
+        `src/lib/${fileName}.spec.ts`,
+    ]) {
         const filePath = joinPathFragments(directory, relativePath);
         if (tree.exists(filePath)) {
             tree.delete(filePath);

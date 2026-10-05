@@ -3,11 +3,7 @@
     "$schema": "../../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/tooling/generators/src",
     "projectType": "library",
-    "tags": [
-        "scope:shared",
-        "type:tooling",
-        "platform:api"
-    ],
+    "tags": ["scope:shared", "type:tooling", "platform:api"],
     "metadata": {
         "description": "Generators of the workspace: wrappers over official Nx plugins",
         "generator": "@nx/plugin:plugin"
@@ -15,9 +11,7 @@
     "targets": {
         "build": {
             "executor": "@nx/js:tsc",
-            "outputs": [
-                "{options.outputPath}"
-            ],
+            "outputs": ["{options.outputPath}"],
             "options": {
                 "outputPath": "packages/tooling/generators/dist",
                 "main": "packages/tooling/generators/src/index.ts",
@@ -40,9 +34,7 @@
         },
         "test": {
             "executor": "@market/tooling:vitest",
-            "outputs": [
-                "{projectRoot}/test-output"
-            ],
+            "outputs": ["{projectRoot}/test-output"],
             "options": {},
             "configurations": {
                 "ci": {

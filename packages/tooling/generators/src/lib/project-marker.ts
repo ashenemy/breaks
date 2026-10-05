@@ -1,9 +1,4 @@
-import {
-    readProjectConfiguration,
-    updateProjectConfiguration,
-    type ProjectConfiguration,
-    type Tree,
-} from '@nx/devkit';
+import { type ProjectConfiguration, readProjectConfiguration, type Tree, updateProjectConfiguration } from '@nx/devkit';
 
 import type { GeneratedProjectMetadata } from '../@types';
 

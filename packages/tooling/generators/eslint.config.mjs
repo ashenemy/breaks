@@ -1,41 +1,34 @@
-import baseConfig from "../../../eslint.config.mjs";
+import baseConfig from '../../../eslint.config.mjs';
 
 export default [
     ...baseConfig,
     {
-        files: [
-            "**/*.json"
-        ],
+        files: ['**/*.json'],
         rules: {
-            "@nx/dependency-checks": [
-                "error",
+            '@nx/dependency-checks': [
+                'error',
                 {
-                    "ignoredFiles": [
-                        "{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}",
-                        "{projectRoot}/vitest.config.{js,ts,mjs,mts}"
-                    ]
-                }
-            ]
+                    ignoredFiles: [
+                        '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
+                        '{projectRoot}/vitest.config.{js,ts,mjs,mts}',
+                    ],
+                },
+            ],
         },
         languageOptions: {
-            parser: await import("jsonc-eslint-parser")
-        }
+            parser: await import('jsonc-eslint-parser'),
+        },
     },
     {
-        ignores: [
-            "**/out-tsc"
-        ]
+        ignores: ['**/out-tsc'],
     },
     {
-        files: [
-      "**/package.json",
-      "**/generators.json"
-    ],
+        files: ['**/package.json', '**/generators.json'],
         rules: {
-            "@nx/nx-plugin-checks": "error"
+            '@nx/nx-plugin-checks': 'error',
         },
         languageOptions: {
-      "parser": (await import('jsonc-eslint-parser'))
-    }
-    }
+            parser: await import('jsonc-eslint-parser'),
+        },
+    },
 ];

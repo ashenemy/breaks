@@ -1,4 +1,4 @@
-import { readJson, visitNotIgnoredFiles, writeJson, type Tree } from '@nx/devkit';
+import { readJson, type Tree, visitNotIgnoredFiles, writeJson } from '@nx/devkit';
 
 import { JSON_INDENT } from './constants';
 

@@ -31,7 +31,11 @@ describe('маркер генератора в project.json', () => {
         const tree = createTsSolutionTree();
         tree.write(
             'packages/core/bare/project.json',
-            JSON.stringify({ name: 'bare', root: 'packages/core/bare', metadata: { generator: '@market/tooling:lib', description: 7 } }),
+            JSON.stringify({
+                name: 'bare',
+                root: 'packages/core/bare',
+                metadata: { generator: '@market/tooling:lib', description: 7 },
+            }),
         );
         expect(readGeneratedProjectMetadata(tree, 'bare')).toEqual({ generator: '@market/tooling:lib' });
     });

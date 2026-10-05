@@ -38,9 +38,9 @@ describe('normalizeLibOptions', () => {
     });
 
     it('нормализует явный каталог к виду без ведущих и завершающих слэшей', () => {
-        expect(normalizeLibOptions({ name: 'mongo', type: 'infra', directory: './packages\\infra\\mongo/' }).directory).toBe(
-            'packages/infra/mongo',
-        );
+        expect(
+            normalizeLibOptions({ name: 'mongo', type: 'infra', directory: './packages\\infra\\mongo/' }).directory,
+        ).toBe('packages/infra/mongo');
     });
 
     it('обрезает пробелы в имени и описании', () => {
@@ -51,18 +51,22 @@ describe('normalizeLibOptions', () => {
 
     it('требует каталог для доменных модулей', () => {
         expect(() => normalizeLibOptions({ name: 'catalog-api', type: 'module' })).toThrow(/directory/);
-        expect(normalizeLibOptions({ name: 'catalog-api', type: 'module', directory: 'modules/catalog/api' }).directory).toBe(
-            'modules/catalog/api',
-        );
+        expect(
+            normalizeLibOptions({ name: 'catalog-api', type: 'module', directory: 'modules/catalog/api' }).directory,
+        ).toBe('modules/catalog/api');
     });
 
     it('проверяет имя, тип, платформу и scope', () => {
         expect(() => normalizeLibOptions({ name: 'Bad Name', type: 'core' })).toThrow(/name должно быть в kebab-case/);
         expect(() => normalizeLibOptions({ type: 'core' } as never)).toThrow(/name должно быть в kebab-case/);
-        expect(() => normalizeLibOptions({ name: 'ok', type: 'unknown' as 'core' })).toThrow(/type должно быть одним из/);
+        expect(() => normalizeLibOptions({ name: 'ok', type: 'unknown' as 'core' })).toThrow(
+            /type должно быть одним из/,
+        );
         expect(() => normalizeLibOptions({ name: 'ok', type: 'core', platform: 'ios' as 'api' })).toThrow(
             /platform должно быть одним из/,
         );
-        expect(() => normalizeLibOptions({ name: 'ok', type: 'core', scope: 'my_scope' })).toThrow(/scope должно быть в kebab-case/);
+        expect(() => normalizeLibOptions({ name: 'ok', type: 'core', scope: 'my_scope' })).toThrow(
+            /scope должно быть в kebab-case/,
+        );
     });
 });

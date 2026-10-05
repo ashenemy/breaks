@@ -1,4 +1,4 @@
-import { formatFiles, joinPathFragments, readJson, updateJson, type GeneratorCallback, type Tree } from '@nx/devkit';
+import { formatFiles, type GeneratorCallback, joinPathFragments, readJson, type Tree, updateJson } from '@nx/devkit';
 import { libraryGenerator } from '@nx/js';
 
 import type { LibGeneratorSchema, NormalizedLibOptions } from '../@types';
@@ -89,10 +89,14 @@ export class LibGenerator {
         if (!tslibVersion) {
             return;
         }
-        updateJson<PackageJson, PackageJson>(this.__tree, joinPathFragments(this.__options.directory, 'package.json'), (json) => ({
-            ...json,
-            dependencies: { ...json.dependencies, tslib: tslibVersion },
-        }));
+        updateJson<PackageJson, PackageJson>(
+            this.__tree,
+            joinPathFragments(this.__options.directory, 'package.json'),
+            (json) => ({
+                ...json,
+                dependencies: { ...json.dependencies, tslib: tslibVersion },
+            }),
+        );
     }
 
     private __snapshot(filePaths: readonly string[]): Map<string, Buffer | null> {

@@ -21,7 +21,9 @@ describe('reformatJsonFiles', () => {
         const tree = createTsSolutionTree();
         tree.write('packages/core/x/project.json', '{\n  "name": "x",\n  "tags": ["a"]\n}\n');
         reformatJsonFiles(tree, ['packages/core/x/project.json', 'packages/core/x/missing.json']);
-        expect(tree.read('packages/core/x/project.json', 'utf-8')).toBe('{\n    "name": "x",\n    "tags": [\n        "a"\n    ]\n}\n');
+        expect(tree.read('packages/core/x/project.json', 'utf-8')).toBe(
+            '{\n    "name": "x",\n    "tags": [\n        "a"\n    ]\n}\n',
+        );
         expect(tree.exists('packages/core/x/missing.json')).toBe(false);
     });
 });

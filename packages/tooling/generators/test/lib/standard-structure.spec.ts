@@ -13,7 +13,10 @@ describe('applyStandardStructure', () => {
     it('создаёт структуру даже без файлов официального генератора', () => {
         const tree = createTsSolutionTree();
         const options = normalizeLibOptions({ name: 'bare', type: 'core' });
-        tree.write(`${options.directory}/tsconfig.spec.json`, JSON.stringify({ compilerOptions: {}, include: ['src/**/*.spec.ts'] }));
+        tree.write(
+            `${options.directory}/tsconfig.spec.json`,
+            JSON.stringify({ compilerOptions: {}, include: ['src/**/*.spec.ts'] }),
+        );
 
         applyStandardStructure(tree, options, TEMPLATES_DIR);
 

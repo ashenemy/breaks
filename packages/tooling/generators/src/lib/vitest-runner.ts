@@ -25,7 +25,9 @@ export class VitestRunner {
         const projectName = context.projectName;
         const project = projectName ? context.projectsConfigurations.projects[projectName] : undefined;
         if (!project) {
-            throw new Error(`Executor @market/tooling:vitest: проект не найден в контексте (${projectName ?? 'без имени'})`);
+            throw new Error(
+                `Executor @market/tooling:vitest: проект не найден в контексте (${projectName ?? 'без имени'})`,
+            );
         }
         return join(context.root, project.root);
     }

@@ -1,4 +1,4 @@
-import { updateJson, writeJson, type Tree } from '@nx/devkit';
+import { type Tree, updateJson, writeJson } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
 type PackageJson = {
@@ -55,7 +55,10 @@ export function createTsSolutionTree(): Tree {
         ],
     }));
 
-    tree.write('eslint.config.mjs', "import nx from '@nx/eslint-plugin';\n\nexport default [...nx.configs['flat/base']];\n");
+    tree.write(
+        'eslint.config.mjs',
+        "import nx from '@nx/eslint-plugin';\n\nexport default [...nx.configs['flat/base']];\n",
+    );
 
     return tree;
 }

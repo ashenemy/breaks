@@ -7,10 +7,7 @@
     "properties": {
         "testPathPattern": {
             "description": "Фильтр файлов тестов (подстрока или regex пути), как у Jest. Можно указать несколько раз.",
-            "oneOf": [
-                { "type": "string" },
-                { "type": "array", "items": { "type": "string" } }
-            ]
+            "oneOf": [{ "type": "string" }, { "type": "array", "items": { "type": "string" } }]
         },
         "testNamePattern": {
             "type": "string",

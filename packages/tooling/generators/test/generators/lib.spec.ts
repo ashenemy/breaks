@@ -1,4 +1,4 @@
-import { readJson, readProjectConfiguration, updateJson, type Tree } from '@nx/devkit';
+import { readJson, readProjectConfiguration, type Tree, updateJson } from '@nx/devkit';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import type { LibGeneratorSchema } from '../../src/@types';
@@ -130,7 +130,9 @@ describe('генератор lib: структура проекта', () => {
             (json) => ({ ...json, devDependencies: { ...json.devDependencies, tslib: '2.8.1' } }),
         );
         await libGenerator(pinned, BASE_OPTIONS);
-        expect(readJson<{ dependencies: Record<string, string> }>(pinned, `${ROOT}/package.json`).dependencies['tslib']).toBe('2.8.1');
+        expect(
+            readJson<{ dependencies: Record<string, string> }>(pinned, `${ROOT}/package.json`).dependencies['tslib'],
+        ).toBe('2.8.1');
     });
 
     it('не трогает корневые package.json и eslint.config.mjs', () => {
@@ -159,7 +161,11 @@ describe('генератор lib: опции', () => {
             directory: 'modules/catalog/api',
             skipFormat: true,
         });
-        expect(readProjectConfiguration(tree, 'catalog-api').tags).toEqual(['scope:catalog', 'type:module', 'platform:api']);
+        expect(readProjectConfiguration(tree, 'catalog-api').tags).toEqual([
+            'scope:catalog',
+            'type:module',
+            'platform:api',
+        ]);
         expect(readJson<{ name: string }>(tree, 'modules/catalog/api/package.json').name).toBe('@market/catalog-api');
         expect(tree.exists('modules/catalog/api/src/lib/api.ts')).toBe(true);
         expect(tree.exists('modules/catalog/api/src/lib/catalog-api.ts')).toBe(false);
