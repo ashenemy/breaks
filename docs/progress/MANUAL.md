@@ -8,10 +8,10 @@
 
 | Поле | Значение |
 |---|---|
-| Задача | E00.03.03 — `core/config`: запрет секретов в TOML и маскирование в логах (см. `docs/epics/E00.03-config-module.md`) |
-| Ветка | `autopilot/E00.03.03` |
-| Подшаги | 1 ⏳ `SecretPolicy` (`isSecretKey`: последнее слово ключа из `secret`, `password`, `token`, `key`, в т. ч. множественное число; `findSecretPaths`, `mask`), `ConfigSecretError extends ConfigError`; 2 проверка каждого слоя TOML в `ConfigLoader.load()` с указанием файла, пути и переменной окружения (`keyToEnvSegment`), значения в сообщениях не раскрываются; `maskSecrets` для логов и ответов API; тесты `test/lib/secrets.spec.ts`, README, допущение, журнал |
-| Следующее действие | Подшаг 1: `src/lib/secrets.ts` и тесты (красные), реализовать. Приёмка `nx test core-config --testPathPattern=secrets`. E00.03.04 (Nest) ждёт фиксации версии NestJS в ADR-0002 (E00.01.03b). Параллельно готовы E00.01.03b–d |
+| Задача | E00.03.04 — `core/config`: интеграция с Nest (`ConfigModule.forModule(token)`) (см. `docs/epics/E00.03-config-module.md`) |
+| Ветка | `autopilot/E00.03.04` (создать от `main`) |
+| Подшаги | не спланированы |
+| Следующее действие | Зафиксировать версии NestJS (`@nestjs/common`, `@nestjs/core`, `@nestjs/testing`, `reflect-metadata`, `rxjs`) в ADR-0002 точными версиями (E00.01.03b переиспользует), спланировать подшаги: `ConfigModule.forRoot(options?)` — один `LoadedConfig` и `ModuleConfigReader` на приложение; `ConfigModule.forModule(token)` — провайдер раздела по токену (инъекция через `@InjectModuleConfig(token)` или сам токен как DI-ключ); ошибка валидации останавливает старт приложения. Приёмка `nx test core-config --testPathPattern=nest`. Параллельно готовы E00.01.03b–d |
 
 ## Разбиение задач (`progress split`)
 
@@ -50,3 +50,4 @@ E00.01.03 (вес 5) разбита по протоколу (размер бол
 | E00.02.07 | done | `b83d0cb` | Приёмка: `nx e2e tooling-lint-e2e` — 23 теста, код 0: фикстура на каждое правило §3, чистые образцы, `--fix`, коды возврата |
 | E00.03.01 | done | `6eba361` | Приёмка: `nx test core-config --testPathPattern=loader` — 9 тестов, код 0; всего 43 теста, покрытие 100% строк, 98% веток; `nx affected -t lint typecheck test build --base=main` — код 0. Пакет `core-config` (`packages/core/config`, теги `scope:shared`, `type:core`, `platform:api`): `ConfigLoader`/`loadConfig`, слои default → `<env>` → local → `.env` → `APP__*`, `ConfigError` с источником и путём, деревья заморожены. Допущения A-018..A-021; `config/local.toml` в `.gitignore`. Замечание для `tooling-generators`: `@nx/js:library` переформатирует `nx.json` и дописывает `targetDefaults["@nx/eslint:lint"]` — откачено вручную, стоит защитить `nx.json` как `package.json` (A-013) |
 | E00.03.02 | done | `9ef018f` | Приёмка: `nx test core-config --testPathPattern=define` — 11 тестов, код 0; всего 54 теста, покрытие 100% строк, 97% веток; affected — код 0. `defineModuleConfig(name, schema)` → `ModuleConfigToken` (`path`, `envVariable`), `ModuleConfigReader.read(token)` читает только `modules.<name>`, валидирует Zod (локаль `ru` на разбор), замораживает и кэширует; `ConfigValidationError` с модулем, ключом, ожидаемым типом и подсказкой для отсутствующего ключа; `loadModuleConfig`; тест изоляции разделов. `zod` 4.6.5 в пакете. Допущение A-022 |
+| E00.03.03 | done | `06a07ef` | Приёмка: `nx test core-config --testPathPattern=secrets` — 10 тестов, код 0; всего 64 теста, покрытие 100% строк, 98% веток; affected — код 0. `SecretPolicy` (последнее слово ключа из `secret`/`password`/`token`/`key`), проверка каждого слоя TOML в `ConfigLoader.load()` → `ConfigSecretError` с файлом, путём и именем переменной без значения; `maskSecrets` для логов и ответов API; опция `secrets`. Допущение A-023 |
