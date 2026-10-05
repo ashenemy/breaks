@@ -55,9 +55,9 @@ Thumbs.db
 # Инструмент прогресса: локальный контекст (docs/03-autopilot-protocol.md, 4.1)
 .progress/
 
-# tooling/lint: конфиги генерируются из TOML на лету (E00.02)
+# tooling/lint: конфиги генерируются из TOML на лету (E00.02).
+# До E00.02 корневой eslint.config.mjs ведётся вручную и коммитится; в E00.02 он добавляется сюда.
 /biome.json
-/eslint.config.mjs
 /.cache/
 
 # Покрытие тестов

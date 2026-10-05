@@ -49,7 +49,8 @@
             "inputs": [
                 "default",
                 "{workspaceRoot}/biome.json",
-                "{workspaceRoot}/eslint.config.mjs"
+                "{workspaceRoot}/eslint.config.mjs",
+                "{workspaceRoot}/tools/boundaries/dep-constraints.mjs"
             ],
             "cache": true
         },
@@ -77,6 +78,12 @@
                     "buildDepsName": "build-deps",
                     "watchDepsName": "watch-deps"
                 }
+            }
+        },
+        {
+            "plugin": "@nx/eslint/plugin",
+            "options": {
+                "targetName": "lint"
             }
         }
     ]
