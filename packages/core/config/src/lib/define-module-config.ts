@@ -1,6 +1,6 @@
 import type { ModuleSchema } from '../@types/index.js';
 import { ConfigError } from './config-error.js';
-import { DEFAULT_ENV_PREFIX, ENV_SEPARATOR, keyToEnvSegment } from './env-overrides.js';
+import { DEFAULT_ENV_PREFIX, envVariableFor } from './env-overrides.js';
 
 /** Корневой раздел модулей в дереве конфига: `[modules.<name>]` (E00.03, требование 2). */
 export const MODULES_SECTION = 'modules';
@@ -38,7 +38,7 @@ export class ModuleConfigToken<TSchema extends ModuleSchema = ModuleSchema> {
 
     /** Имя переменной окружения для ключа раздела: `envVariable(['pageSize'])` → `APP__MODULES__CATALOG__PAGE_SIZE`. */
     public envVariable(keys: readonly string[], prefix: string = DEFAULT_ENV_PREFIX): string {
-        return [prefix, ...[MODULES_SECTION, this.name, ...keys].map(keyToEnvSegment)].join(ENV_SEPARATOR);
+        return envVariableFor([MODULES_SECTION, this.name, ...keys], prefix);
     }
 }
 

@@ -15,6 +15,7 @@ import { DotenvFile, mergeEnv } from './dotenv.js';
 import { DEFAULT_ENV_PREFIX, EnvOverrides } from './env-overrides.js';
 import { resolveEnvironment } from './environment.js';
 import { deepFreeze, deepMerge } from './merge.js';
+import { DEFAULT_SECRET_POLICY, type SecretPolicy } from './secrets.js';
 import { TomlLayer } from './toml-layer.js';
 
 /** Каталог конфигов относительно рабочего каталога процесса. */
@@ -43,6 +44,8 @@ export class ConfigLoader {
 
     private readonly __overrides: EnvOverrides;
 
+    private readonly __secrets: SecretPolicy;
+
     constructor(options: ConfigLoaderOptions = {}) {
         const cwd = process.cwd();
         this.__configDir = options.configDir ?? join(cwd, CONFIG_DIRECTORY);
@@ -51,6 +54,7 @@ export class ConfigLoader {
         this.__environment = options.environment;
         this.__envPrefix = options.envPrefix ?? DEFAULT_ENV_PREFIX;
         this.__overrides = new EnvOverrides(this.__envPrefix);
+        this.__secrets = options.secrets ?? DEFAULT_SECRET_POLICY;
     }
 
     public get configDir(): string {
@@ -85,6 +89,7 @@ export class ConfigLoader {
                 ]);
             }
             layers.push(info);
+            this.__secrets.assertNoSecrets(tree, layer.filePath, this.__envPrefix);
             fileTree = deepMerge(fileTree, tree);
         }
 

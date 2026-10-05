@@ -31,6 +31,14 @@
 
 Таблицы объединяются по ключам, скаляры, массивы и даты заменяются целиком. Небезопасные ключи (`__proto__`, `constructor`) отвергаются при разборе. Результат глубоко заморожен: конфиг неизменяем в рантайме.
 
+### Секреты
+
+Секрет — ключ, последнее слово которого (в `camelCase`, `snake_case` или `kebab-case`, допускается множественное число) входит в список `secret`, `password`, `token`, `key`: `apiKey`, `dbPassword`, `accessToken`, `clientSecret`, таблица `secrets`. Слово в середине описывает секрет, а не хранит его: `tokenTtl`, `passwordMinLength`, `keyPrefix`, `accessKeyId` — не секреты. Называйте секретные ключи так, чтобы правило срабатывало.
+
+- Секрет в любом файле TOML прерывает старт (`ConfigSecretError`): в сообщении файл, путь и имя переменной, которую нужно задать; значение не раскрывается.
+- Секреты приходят только из окружения: локально `.env`, в проде инъекция из AWS Secrets Manager в окружение контейнера.
+- `maskSecrets(value)` возвращает копию, где всё под секретными ключами заменено на `***`: применяйте к конфигу перед логированием и в ответах API. Диагностика `layers` и сообщения ошибок пакета значений не содержат.
+
 ## Публичный API
 
 Экспортируется только через `src/index.ts`, строго именованно:
@@ -38,16 +46,17 @@
 - `defineModuleConfig(name, schema)` → `ModuleConfigToken`: раздел `[modules.<name>]` (имя в `camelCase`) и его Zod-схема; `token.path` (`modules.<name>`), `token.envVariable(['pageSize'])` (`APP__MODULES__<NAME>__PAGE_SIZE`). Тип значений: `ModuleConfig<typeof TOKEN>`. Для защиты от опечаток в ключах используйте `z.strictObject`.
 - `ModuleConfigReader` (`new ModuleConfigReader(loadedConfig).read(token)`) — по токену доступен только собственный раздел (нет раздела — пустая таблица, работают умолчания схемы); результат проверен схемой, заморожен и кэшируется по токену. `loadModuleConfig(token, options?)` — то же одним вызовом с загрузкой с диска.
 - `ConfigValidationError` (наследует `ConfigError`, поле `module`) — раздел не прошёл схему: в каждой проблеме ключ, ожидаемый тип (сообщения Zod на русском) и для отсутствующего ключа подсказка, где его задать (TOML-ключ или переменная окружения).
-- `ConfigLoader` (`new ConfigLoader(options).load()`), `loadConfig(options?)` — загрузка всех слоёв; возвращает `LoadedConfig` с `environment`, `envPrefix`, `tree` (итог), `fileTree` (только файлы TOML, нужно для запрета секретов в TOML) и `layers` (диагностика без значений).
-- `ConfigLoaderOptions`: `configDir` (по умолчанию `<cwd>/config`), `dotenvPath` (`<cwd>/.env`, `null` отключает), `env` (`process.env`), `envPrefix` (`APP`), `environment`.
+- `SecretPolicy` (`isSecretKey`, `findSecretPaths`, `maskSecrets`, `assertNoSecrets`; слова и маска настраиваются), `DEFAULT_SECRET_POLICY`, `isSecretKey(key)`, `maskSecrets(value)`, `ConfigSecretError` (наследует `ConfigError`, поле `paths`), константы `SECRET_KEY_WORDS`, `SECRET_MASK`.
+- `ConfigLoader` (`new ConfigLoader(options).load()`), `loadConfig(options?)` — загрузка всех слоёв с проверкой секретов; возвращает `LoadedConfig` с `environment`, `envPrefix`, `tree` (итог), `fileTree` (только файлы TOML) и `layers` (диагностика без значений).
+- `ConfigLoaderOptions`: `configDir` (по умолчанию `<cwd>/config`), `dotenvPath` (`<cwd>/.env`, `null` отключает), `env` (`process.env`), `envPrefix` (`APP`), `environment`, `secrets` (политика секретов).
 - `ConfigError` — ошибка с `issues: { source, path, message }[]`: какой файл или переменная, какой ключ, что ожидалось.
-- `TomlLayer`, `DotenvFile`, `EnvOverrides`, `coerceEnvValue`, `envSegmentToKey`, `keyToEnvSegment`, `mergeEnv` — слои по отдельности.
+- `TomlLayer`, `DotenvFile`, `EnvOverrides`, `coerceEnvValue`, `envSegmentToKey`, `keyToEnvSegment`, `envVariableFor`, `mergeEnv` — слои по отдельности.
 - `resolveEnvironment`, `isAppEnvironment`, `ENVIRONMENTS`, `ENVIRONMENT_VARIABLE` — окружение.
 - `deepMerge`, `deepFreeze`, `isConfigTree`, `parseToml` — примитивы слияния и разбора.
 - Константы `CONFIG_DIRECTORY`, `DOTENV_FILE`, `DEFAULT_LAYER_FILE`, `DEFAULT_ENV_PREFIX`, `ENV_SEPARATOR`, `MODULES_SECTION`.
 - Типы: `AppEnvironment`, `ConfigTree`, `ConfigValue`, `ConfigLayerInfo`, `ConfigLayerName`, `ConfigIssue`, `LoadedConfig`, `ModuleConfig`, `ModuleSchema`, `EnvRecord`, `EnvValues`, `EnvOverride`, `EnvOverridesResult`, `TomlLayerResult`.
 
-Запрет секретов в TOML с маскированием и `ConfigModule.forModule(token)` для Nest добавляются задачами E00.03.03–E00.03.04.
+`ConfigModule.forModule(token)` для Nest добавляется задачей E00.03.04.
 
 ## Примеры
 
@@ -101,4 +110,5 @@ try {
 | `nx test core-config` | Vitest, тесты из `test/`; `--coverage` проверяет порог 90% строк и веток |
 | `nx test core-config --testPathPattern=loader` | Приёмка E00.03.01: слои, порядок слияния, переопределения, диагностика |
 | `nx test core-config --testPathPattern=define` | Приёмка E00.03.02: токены модулей, валидация Zod, изоляция разделов, ошибки старта |
+| `nx test core-config --testPathPattern=secrets` | Приёмка E00.03.03: запрет секретов в TOML, маскирование |
 | `nx build core-config` | Сборка `tsc` в `dist/` |

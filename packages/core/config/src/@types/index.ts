@@ -6,6 +6,7 @@
 import type { output, ZodType } from 'zod';
 
 import type { ModuleConfigToken } from '../lib/define-module-config.js';
+import type { SecretPolicy } from '../lib/secrets.js';
 
 /** Значения раздела модуля, выведенные из Zod-схемы токена: `ModuleConfig<typeof CATALOG_CONFIG>`. */
 export type ModuleConfig<TToken extends ModuleConfigToken> =
@@ -81,6 +82,8 @@ export type ConfigLoaderOptions = {
     envPrefix?: string;
     /** Окружение; по умолчанию выводится из `APP_ENV`, затем `NODE_ENV`, иначе `dev`. */
     environment?: AppEnvironment;
+    /** Политика секретов для проверки слоёв TOML. По умолчанию слова `secret`, `password`, `token`, `key`. */
+    secrets?: SecretPolicy;
 };
 
 /** Загруженная конфигурация: деревья заморожены, значения в рантайме неизменяемы (E00.03, требование 7). */

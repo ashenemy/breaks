@@ -25,10 +25,20 @@ export {
     ENV_SEPARATOR,
     EnvOverrides,
     envSegmentToKey,
+    envVariableFor,
     keyToEnvSegment,
 } from './lib/env-overrides.js';
 export { ENVIRONMENT_VARIABLE, ENVIRONMENTS, isAppEnvironment, resolveEnvironment } from './lib/environment.js';
 export { deepFreeze, deepMerge, isConfigTree } from './lib/merge.js';
 export { ConfigValidationError, loadModuleConfig, ModuleConfigReader } from './lib/module-config-reader.js';
+export {
+    ConfigSecretError,
+    DEFAULT_SECRET_POLICY,
+    isSecretKey,
+    maskSecrets,
+    SECRET_KEY_WORDS,
+    SECRET_MASK,
+    SecretPolicy,
+} from './lib/secrets.js';
 export { parseToml } from './lib/toml.js';
 export { TomlLayer } from './lib/toml-layer.js';

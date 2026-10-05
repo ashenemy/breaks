@@ -30,6 +30,11 @@ export function keyToEnvSegment(key: string): string {
     return key.replace(/([A-Z])/g, '_$1').toUpperCase();
 }
 
+/** Имя переменной для пути в дереве: `['modules', 'catalog', 'pageSize']` → `APP__MODULES__CATALOG__PAGE_SIZE`. */
+export function envVariableFor(path: readonly string[], prefix: string = DEFAULT_ENV_PREFIX): string {
+    return [prefix, ...path.map(keyToEnvSegment)].join(ENV_SEPARATOR);
+}
+
 /**
  * Приведение строки окружения к типу значения конфига. Тип задаёт текущее значение из TOML (строка остаётся
  * строкой, число и логическое значение разбираются строго). Без текущего значения строка читается как литерал
