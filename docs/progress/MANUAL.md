@@ -24,6 +24,9 @@ E00.01.03 (вес 5) разбита по протоколу (размер бол
 | E00.01.03c | Генератор `angular-app` над `@nx/angular:application` (SSR); Angular и Tailwind в ADR-0002 | `packages/tooling/generators` | 1 | E00.01.03a |
 | E00.01.03d | Генератор `nativescript-app` над `@nativescript/nx:app`; NativeScript в ADR-0002 | `packages/tooling/generators` | 1 | E00.01.03a |
 | E00.01.03e | Генератор `module`: `modules/<name>/{api,web,native}` по выбору платформ и контрактный пакет | `packages/tooling/generators` | 1 | E00.01.03b, E00.01.03c, E00.01.03d |
+| E00.01.03f | Executor `vitest`: приёмочные команды эпиков используют Jest-флаг `--testPathPattern`, который Vitest отвергает; генератор `lib` ставит executor целью `test` (A-014) | `packages/tooling/generators` | 1 | E00.01.03a |
+
+Зависимость E00.02.01 (первая приёмка с `--testPathPattern`) переносится на E00.01.03f.
 
 ## Журнал задач
 
@@ -36,4 +39,5 @@ E00.01.03 (вес 5) разбита по протоколу (размер бол
 | E00.01.03c | todo | — | — |
 | E00.01.03d | todo | — | — |
 | E00.01.03e | todo | — | — |
+| E00.01.03f | done | `9b9e330` | Приёмка: `nx test tooling-generators` — 66 тестов, код 0 (через сам executor); `nx test tooling-generators --testPathPattern=executors` и `-c ci` (покрытие 100% строк, 97,4% веток) — код 0. Допущение A-014 |
 | E00.01.04 | done | `e6888e2` | Приёмка: `nx affected -t lint test build --base=HEAD~1` — код 0; `pnpm check:generated`, `pnpm test:tools` (45 тестов) — код 0. README корня: раздел «Работа с репозиторием» |
