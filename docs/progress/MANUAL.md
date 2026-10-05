@@ -9,9 +9,9 @@
 | Поле | Значение |
 |---|---|
 | Задача | E00.05.02 — `core/js-utils`: проверки типов и утверждения (см. `docs/epics/E00.05-utils.md`) |
-| Ветка | `autopilot/E00.05.02` (создать от `main`) |
-| Подшаги | не спланированы |
-| Следующее действие | `nx g @market/tooling:lib js-utils --type=core` (проект `core-js-utils`), спланировать подшаги: `src/lib/guards.ts` (`isString` … `isObjectId`), `src/lib/assertions.ts` (`invariant`, `assertNever`, `assertDefined`), тесты `test/lib/guards.spec.ts` и `assertions.spec.ts`, порог покрытия 95% (эпик). Приёмка `nx test core-js-utils --testPathPattern=guards`. Окружение: WSL 3.0.1 и Docker Desktop 4.93.0 установлены, компонент «Платформа виртуальной машины» ждёт перезагрузки Windows — после неё проверить `docker info` и перейти к E00.04 |
+| Ветка | `autopilot/E00.05.02` |
+| Подшаги | 1 ⏳ каркас `core-js-utils` (`--type=core`, зависимость `@market/core-ts-utils` для `NonEmptyArray`), `src/lib/guards.ts`: `isString`, `isNumber` (без NaN), `isBoolean`, `isBigInt`, `isSymbol`, `isFunction`, `isArray`, `isDate` (валидная), `isObject`, `isPlainObject`, `isNil`, `isNonEmptyString`, `isNonEmptyArray`, `isUuid`, `isObjectId`; тесты `test/lib/guards.spec.ts`; 2 `src/lib/assertions.ts`: `invariant` (+ `InvariantError`), `assertNever`, `assertDefined`; тесты, порог покрытия 95%, README, журнал |
+| Следующее действие | Подшаг 1: генератор, guards и тесты. Приёмка `nx test core-js-utils --testPathPattern=guards`. Окружение: WSL 3.0.1 и Docker Desktop 4.93.0 установлены, компонент «Платформа виртуальной машины» ждёт перезагрузки Windows — после неё проверить `docker info` и перейти к E00.04 |
 
 ## Разбиение задач (`progress split`)
 
