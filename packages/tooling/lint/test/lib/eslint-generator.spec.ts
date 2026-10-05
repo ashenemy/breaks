@@ -5,7 +5,14 @@ import { fileURLToPath } from 'node:url';
 import { ESLint } from 'eslint';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { buildEslintConfig, detectToolVersions, EslintGenerator, HashCache, loadRules, PLATFORM_GLOBS } from '../../src/index.js';
+import {
+    buildEslintConfig,
+    detectToolVersions,
+    EslintGenerator,
+    HashCache,
+    loadRules,
+    PLATFORM_GLOBS,
+} from '../../src/index.js';
 
 const WORKSPACE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..');
 const RULES_PATH = join(WORKSPACE_ROOT, 'packages', 'tooling', 'lint', 'rules.toml');
@@ -75,11 +82,19 @@ describe('buildEslintConfig', () => {
             },
             i18n: { ...rules.i18n, 'forbid-hardcoded-text': false },
             imports: { ...rules.imports, 'no-default-export': false, 'no-export-all': false },
-            members: { ...rules.members, 'explicit-accessibility': false, 'explicit-return-types': false, typedef: false },
+            members: {
+                ...rules.members,
+                'explicit-accessibility': false,
+                'explicit-return-types': false,
+                typedef: false,
+            },
             naming: { ...rules.naming, 'exported-functions': 'const' as const },
             overlap: { biome: ['organizeImports', 'unknownRule'], eslint: [] },
             platforms: {
-                api: { naming: { types: 'PascalCase' as const }, types: { 'consistent-type-definitions': 'interface' as const } },
+                api: {
+                    naming: { types: 'PascalCase' as const },
+                    types: { 'consistent-type-definitions': 'interface' as const },
+                },
                 web: { members: { typedef: false } },
             },
         };
@@ -112,23 +127,50 @@ describe('сгенерированный конфиг в реальном ESLint
     }
 
     it.each([
-        ['приватное поле без двойного подчёркивания', 'export class Store {\n    private cache: number = 1;\n}\n', '@typescript-eslint/naming-convention'],
-        ['interface вместо type', 'export interface Shape {\n    size: number;\n}\n', '@typescript-eslint/consistent-type-definitions'],
+        [
+            'приватное поле без двойного подчёркивания',
+            'export class Store {\n    private cache: number = 1;\n}\n',
+            '@typescript-eslint/naming-convention',
+        ],
+        [
+            'interface вместо type',
+            'export interface Shape {\n    size: number;\n}\n',
+            '@typescript-eslint/consistent-type-definitions',
+        ],
         ['export default', 'const value: number = 1;\nexport default value;\n', 'no-restricted-syntax'],
         ['export * ', "export * from './other.js';\n", 'no-restricted-syntax'],
         ['export const со стрелочной функцией', 'export const run = (): number => 1;\n', 'no-restricted-syntax'],
-        ['метод перед полем', 'export class Order {\n    public total(): number {\n        return 1;\n    }\n\n    public id: string = "";\n}\n', '@typescript-eslint/member-ordering'],
-        ['член без модификатора доступа', 'export class Cart {\n    items: number = 0;\n}\n', '@typescript-eslint/explicit-member-accessibility'],
-        ['метод без типа результата', 'export class Cart {\n    public count() {\n        return 1;\n    }\n}\n', '@typescript-eslint/explicit-function-return-type'],
-        ['Angular Material вне ui-web', "import { MatButton } from '@angular/material/button';\nexport const BUTTON: unknown = MatButton;\n", 'no-restricted-imports'],
+        [
+            'метод перед полем',
+            'export class Order {\n    public total(): number {\n        return 1;\n    }\n\n    public id: string = "";\n}\n',
+            '@typescript-eslint/member-ordering',
+        ],
+        [
+            'член без модификатора доступа',
+            'export class Cart {\n    items: number = 0;\n}\n',
+            '@typescript-eslint/explicit-member-accessibility',
+        ],
+        [
+            'метод без типа результата',
+            'export class Cart {\n    public count() {\n        return 1;\n    }\n}\n',
+            '@typescript-eslint/explicit-function-return-type',
+        ],
+        [
+            'Angular Material вне ui-web',
+            "import { MatButton } from '@angular/material/button';\nexport const BUTTON: unknown = MatButton;\n",
+            'no-restricted-imports',
+        ],
     ])('ловит: %s', async (_title, code, expected) => {
         expect(await ruleIds(code)).toContain(expected);
     });
 
     it('разрешает Material внутри ui-web и не дублирует правила Biome', async () => {
-        const material = "import { MatButton } from '@angular/material/button';\nexport const BUTTON: unknown = MatButton;\n";
+        const material =
+            "import { MatButton } from '@angular/material/button';\nexport const BUTTON: unknown = MatButton;\n";
         expect(await ruleIds(material, 'packages/ui/ui-web/src/lib/button.ts')).not.toContain('no-restricted-imports');
-        expect(await ruleIds('export function f(value: any): string {\n    return String(value);\n}\n')).not.toContain('@typescript-eslint/no-explicit-any');
+        expect(await ruleIds('export function f(value: any): string {\n    return String(value);\n}\n')).not.toContain(
+            '@typescript-eslint/no-explicit-any',
+        );
     });
 
     it('пропускает код по конвенциям', async () => {
@@ -181,14 +223,25 @@ describe('EslintGenerator', () => {
         expect(first.content).not.toContain('angular-eslint');
         expect(new HashCache(root).read()['eslint']).toBe(first.hash);
 
-        expect(new EslintGenerator({ workspaceRoot: root, rulesPath: RULES_PATH }, versions).generate().written).toBe(false);
-        expect(new EslintGenerator({ workspaceRoot: root, rulesPath: RULES_PATH, force: true }, versions).generate().written).toBe(true);
+        expect(new EslintGenerator({ workspaceRoot: root, rulesPath: RULES_PATH }, versions).generate().written).toBe(
+            false,
+        );
+        expect(
+            new EslintGenerator({ workspaceRoot: root, rulesPath: RULES_PATH, force: true }, versions).generate()
+                .written,
+        ).toBe(true);
 
-        const withAngular = new EslintGenerator({ workspaceRoot: root, rulesPath: RULES_PATH }, { ...versions, 'angular-eslint': '20.0.0' }).generate();
+        const withAngular = new EslintGenerator(
+            { workspaceRoot: root, rulesPath: RULES_PATH },
+            { ...versions, 'angular-eslint': '20.0.0' },
+        ).generate();
         expect(withAngular.written).toBe(true);
         expect(withAngular.content).toContain('angular-eslint');
 
-        const forced = new EslintGenerator({ workspaceRoot: root, rulesPath: RULES_PATH, features: { angular: false } }, { ...versions, 'angular-eslint': '20.0.0' }).generate();
+        const forced = new EslintGenerator(
+            { workspaceRoot: root, rulesPath: RULES_PATH, features: { angular: false } },
+            { ...versions, 'angular-eslint': '20.0.0' },
+        ).generate();
         expect(forced.content).not.toContain('angular-eslint');
         expect(existsSync(first.filePath)).toBe(true);
     });

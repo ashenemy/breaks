@@ -29,7 +29,16 @@ const BIOME_OWNED: Record<string, string[]> = {
 
 const TS_FILES = ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts'];
 const ALL_SOURCE = [...TS_FILES, '**/*.js', '**/*.jsx', '**/*.cjs', '**/*.mjs'];
-const IGNORES = ['**/dist', '**/out-tsc', '**/coverage', '**/test-output', '**/.nx', 'tmp', '**/vitest.config.*.timestamp*', '**/*.template'];
+const IGNORES = [
+    '**/dist',
+    '**/out-tsc',
+    '**/coverage',
+    '**/test-output',
+    '**/.nx',
+    'tmp',
+    '**/vitest.config.*.timestamp*',
+    '**/*.template',
+];
 
 /** Файлы платформ для переопределений `[platforms.*]` (01-architecture.md, раздел 4). */
 export const PLATFORM_GLOBS: Record<'api' | 'native' | 'shared' | 'web', string[]> = {
@@ -64,7 +73,8 @@ function namingRules(naming: NamingRules): RuleSet {
         rules['no-restricted-syntax'] = [
             'error',
             {
-                selector: 'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator > :matches(ArrowFunctionExpression, FunctionExpression)',
+                selector:
+                    'ExportNamedDeclaration > VariableDeclaration > VariableDeclarator > :matches(ArrowFunctionExpression, FunctionExpression)',
                 message: 'Экспортируемые функции объявляются через export function, а не export const.',
             },
         ];
@@ -106,19 +116,26 @@ function typeRules(types: TypesRules): RuleSet {
 function exportRules(rules: RulesConfig): RestrictedSyntax[] {
     const restrictions: RestrictedSyntax[] = [];
     if (rules.imports['no-default-export']) {
-        restrictions.push({ selector: 'ExportDefaultDeclaration', message: 'Только именованные экспорты через src/index.ts.' });
+        restrictions.push({
+            selector: 'ExportDefaultDeclaration',
+            message: 'Только именованные экспорты через src/index.ts.',
+        });
     }
     if (rules.imports['no-export-all']) {
-        restrictions.push({ selector: 'ExportAllDeclaration', message: 'export * запрещён: перечисляйте экспорты явно.' });
+        restrictions.push({
+            selector: 'ExportAllDeclaration',
+            message: 'export * запрещён: перечисляйте экспорты явно.',
+        });
     }
     return restrictions;
 }
 
 function toDepConstraints(constraints: readonly BoundaryConstraint[]): Record<string, unknown>[] {
     return constraints.map((constraint) => {
-        const result: Record<string, unknown> = constraint.source !== undefined
-            ? { sourceTag: constraint.source }
-            : { allSourceTags: constraint['all-source'] };
+        const result: Record<string, unknown> =
+            constraint.source !== undefined
+                ? { sourceTag: constraint.source }
+                : { allSourceTags: constraint['all-source'] };
         if (constraint.only) {
             result['onlyDependOnLibsWithTags'] = constraint.only;
         }
@@ -137,7 +154,10 @@ function mergeRestrictedSyntax(target: RuleSet, extra: RestrictedSyntax[]): void
     }
 }
 
-function tsRules(rules: RulesConfig, overrides: { members?: MembersRules; naming?: NamingRules; types?: TypesRules } = {}): RuleSet {
+function tsRules(
+    rules: RulesConfig,
+    overrides: { members?: MembersRules; naming?: NamingRules; types?: TypesRules } = {},
+): RuleSet {
     const set: RuleSet = {
         ...namingRules(overrides.naming ?? rules.naming),
         ...memberRules(overrides.members ?? rules.members),
@@ -178,7 +198,10 @@ function platformBlocks(rules: RulesConfig): ConfigBlock[] {
             }
         }
         if (Object.keys(diff).length > 0) {
-            blocks.push({ files: files.flatMap((glob) => TS_FILES.map((pattern) => `${glob.replace(/\/\*\*$/, '')}/${pattern}`)), rules: diff });
+            blocks.push({
+                files: files.flatMap((glob) => TS_FILES.map((pattern) => `${glob.replace(/\/\*\*$/, '')}/${pattern}`)),
+                rules: diff,
+            });
         }
     }
     return blocks;
@@ -203,7 +226,12 @@ function angularBlocks(rules: RulesConfig): ConfigBlock[] {
                       rules: {
                           '@angular-eslint/template/i18n': [
                               'error',
-                              { checkId: false, checkText: true, checkAttributes: true, ignoreAttributes: ['routerLink', 'formControlName'] },
+                              {
+                                  checkId: false,
+                                  checkText: true,
+                                  checkAttributes: true,
+                                  ignoreAttributes: ['routerLink', 'formControlName'],
+                              },
                           ],
                       } as RuleSet,
                   },
@@ -269,10 +297,20 @@ export function buildEslintConfig(rules: RulesConfig, features: EslintFeatures):
     if (features.angular) {
         lines.push("import angular from 'angular-eslint';");
     }
-    lines.push('', 'export default [', `${' '.repeat(indent)}...nx.configs['flat/base'],`, `${' '.repeat(indent)}...nx.configs['flat/typescript'],`, `${' '.repeat(indent)}...nx.configs['flat/javascript'],`);
+    lines.push(
+        '',
+        'export default [',
+        `${' '.repeat(indent)}...nx.configs['flat/base'],`,
+        `${' '.repeat(indent)}...nx.configs['flat/typescript'],`,
+        `${' '.repeat(indent)}...nx.configs['flat/javascript'],`,
+    );
     if (features.angular) {
-        lines.push(`${' '.repeat(indent)}...angular.configs.tsRecommended.map((config) => ({ ...config, files: ['**/*.ts'] })),`);
-        lines.push(`${' '.repeat(indent)}...angular.configs.templateRecommended.map((config) => ({ ...config, files: ['**/*.html'] })),`);
+        lines.push(
+            `${' '.repeat(indent)}...angular.configs.tsRecommended.map((config) => ({ ...config, files: ['**/*.ts'] })),`,
+        );
+        lines.push(
+            `${' '.repeat(indent)}...angular.configs.templateRecommended.map((config) => ({ ...config, files: ['**/*.html'] })),`,
+        );
     }
     for (const block of blocks) {
         lines.push(`${' '.repeat(indent)}${serialize(block, indent)},`);

@@ -55,5 +55,7 @@ export class HashCache {
 }
 
 function isHashRecord(value: unknown): value is HashRecord {
-    return typeof value === 'object' && value !== null && Object.values(value).every((item) => typeof item === 'string');
+    return (
+        typeof value === 'object' && value !== null && Object.values(value).every((item) => typeof item === 'string')
+    );
 }

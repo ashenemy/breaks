@@ -19,7 +19,10 @@ describe('rules.toml воркспейса', () => {
         expect(filePath.replace(/\\/g, '/')).toMatch(/packages\/tooling\/lint\/rules\.toml$/);
         expect(config.format.indent).toBe(4);
         expect(config.boundaries.constraints.length).toBeGreaterThanOrEqual(17);
-        expect(config.boundaries.constraints[0]).toEqual({ source: 'platform:api', only: ['platform:api', 'platform:shared'] });
+        expect(config.boundaries.constraints[0]).toEqual({
+            source: 'platform:api',
+            only: ['platform:api', 'platform:shared'],
+        });
         expect(Object.keys(config.commits.types)).toEqual([
             'feat',
             'fix',
@@ -83,7 +86,10 @@ feat = "✨"
 
     it('читает файл с диска и сообщает об отсутствующем файле', () => {
         const filePath = join(tempDir, 'rules.toml');
-        writeFileSync(filePath, '[boundaries]\n[[boundaries.constraints]]\nsource = "type:core"\nonly = ["type:core"]\n[commits.types]\nfeat = "✨"\n');
+        writeFileSync(
+            filePath,
+            '[boundaries]\n[[boundaries.constraints]]\nsource = "type:core"\nonly = ["type:core"]\n[commits.types]\nfeat = "✨"\n',
+        );
         const loader = new RulesLoader(filePath);
         expect(loader.filePath).toBe(filePath);
         expect(loader.load().config.commits.types).toEqual({ feat: '✨' });

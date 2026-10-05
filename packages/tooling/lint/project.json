@@ -3,11 +3,7 @@
     "$schema": "../../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/tooling/lint/src",
     "projectType": "library",
-    "tags": [
-        "scope:shared",
-        "type:tooling",
-        "platform:api"
-    ],
+    "tags": ["scope:shared", "type:tooling", "platform:api"],
     "metadata": {
         "description": "Правила кода в TOML: схема, загрузчик, генерация конфигов Biome и ESLint, раннер, хуки",
         "generator": "@market/tooling:lib"
@@ -15,15 +11,23 @@
     "targets": {
         "test": {
             "executor": "@market/tooling:vitest",
-            "outputs": [
-                "{projectRoot}/test-output"
-            ],
+            "outputs": ["{projectRoot}/test-output"],
             "options": {},
             "configurations": {
                 "ci": {
                     "coverage": true
                 }
             }
+        },
+        "run": {
+            "executor": "nx:run-commands",
+            "dependsOn": ["build"],
+            "options": {
+                "command": "node packages/tooling/lint/dist/cli/lint-run.js",
+                "cwd": "{workspaceRoot}",
+                "forwardAllArgs": true
+            },
+            "cache": false
         }
     }
 }

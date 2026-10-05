@@ -31,7 +31,10 @@ export class EslintGenerator {
 
     private readonly __versions: Record<string, string>;
 
-    constructor(options: EslintGeneratorOptions, versions: Record<string, string> = detectToolVersions(options.workspaceRoot)) {
+    constructor(
+        options: EslintGeneratorOptions,
+        versions: Record<string, string> = detectToolVersions(options.workspaceRoot),
+    ) {
         const { features, ...rest } = options;
         this.__options = { force: false, rulesPath: DEFAULT_RULES_PATH, ...rest };
         this.__versions = versions;
@@ -43,7 +46,10 @@ export class EslintGenerator {
         const rulesToml = readFileSync(rulesPath, 'utf8');
         const rules = new RulesLoader(rulesPath).parse(rulesToml);
         const content = buildEslintConfig(rules, this.__features);
-        const hash = computeConfigHash(rulesToml, { ...this.__versions, 'features.angular': String(this.__features.angular) });
+        const hash = computeConfigHash(rulesToml, {
+            ...this.__versions,
+            'features.angular': String(this.__features.angular),
+        });
         const filePath = join(workspaceRoot, ESLINT_CONFIG_FILE);
         const cache = new HashCache(workspaceRoot);
 

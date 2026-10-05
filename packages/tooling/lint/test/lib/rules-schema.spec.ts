@@ -66,25 +66,41 @@ describe('RULES_SCHEMA: обязательные разделы и провер�
     });
 
     it('проверяет формат тегов и состав ограничения границ', () => {
-        expect(RULES_SCHEMA.safeParse({ ...MINIMAL, boundaries: { constraints: [{ source: 'layer:core', only: ['type:core'] }] } }).success).toBe(false);
-        expect(RULES_SCHEMA.safeParse({ ...MINIMAL, boundaries: { constraints: [{ only: ['type:core'] }] } }).success).toBe(false);
         expect(
             RULES_SCHEMA.safeParse({
                 ...MINIMAL,
-                boundaries: { constraints: [{ source: 'type:core', 'all-source': ['type:core'], only: ['type:core'] }] },
+                boundaries: { constraints: [{ source: 'layer:core', only: ['type:core'] }] },
             }).success,
         ).toBe(false);
-        expect(RULES_SCHEMA.safeParse({ ...MINIMAL, boundaries: { constraints: [{ source: 'type:core' }] } }).success).toBe(false);
+        expect(
+            RULES_SCHEMA.safeParse({ ...MINIMAL, boundaries: { constraints: [{ only: ['type:core'] }] } }).success,
+        ).toBe(false);
         expect(
             RULES_SCHEMA.safeParse({
                 ...MINIMAL,
-                boundaries: { constraints: [{ 'all-source': ['scope:shared', 'type:core'], 'not-on': ['scope:catalog'] }] },
+                boundaries: {
+                    constraints: [{ source: 'type:core', 'all-source': ['type:core'], only: ['type:core'] }],
+                },
+            }).success,
+        ).toBe(false);
+        expect(
+            RULES_SCHEMA.safeParse({ ...MINIMAL, boundaries: { constraints: [{ source: 'type:core' }] } }).success,
+        ).toBe(false);
+        expect(
+            RULES_SCHEMA.safeParse({
+                ...MINIMAL,
+                boundaries: {
+                    constraints: [{ 'all-source': ['scope:shared', 'type:core'], 'not-on': ['scope:catalog'] }],
+                },
             }).success,
         ).toBe(true);
     });
 
     it('не допускает одно правило сразу в Biome и ESLint', () => {
-        const result = RULES_SCHEMA.safeParse({ ...MINIMAL, overlap: { biome: ['noExplicitAny'], eslint: ['noExplicitAny'] } });
+        const result = RULES_SCHEMA.safeParse({
+            ...MINIMAL,
+            overlap: { biome: ['noExplicitAny'], eslint: ['noExplicitAny'] },
+        });
         expect(result.success).toBe(false);
     });
 
@@ -98,14 +114,21 @@ describe('RULES_SCHEMA: обязательные разделы и провер�
     });
 
     it('принимает частичные переопределения по платформам', () => {
-        const config = RULES_SCHEMA.parse({ ...MINIMAL, platforms: { web: { members: { 'explicit-return-types': false } } } });
+        const config = RULES_SCHEMA.parse({
+            ...MINIMAL,
+            platforms: { web: { members: { 'explicit-return-types': false } } },
+        });
         expect(config.platforms.web?.members).toEqual({ 'explicit-return-types': false });
     });
 
     it('переопределения не подтягивают умолчания вложенных разделов и проверяют значения', () => {
         const config = RULES_SCHEMA.parse({ ...MINIMAL, platforms: { api: { naming: { types: 'PascalCase' } } } });
         expect(config.platforms.api?.naming).toEqual({ types: 'PascalCase' });
-        expect(RULES_SCHEMA.safeParse({ ...MINIMAL, platforms: { api: { naming: { types: 'kebab-case' } } } }).success).toBe(false);
-        expect(RULES_SCHEMA.safeParse({ ...MINIMAL, platforms: { api: { format: { tabs: true } } } }).success).toBe(false);
+        expect(
+            RULES_SCHEMA.safeParse({ ...MINIMAL, platforms: { api: { naming: { types: 'kebab-case' } } } }).success,
+        ).toBe(false);
+        expect(RULES_SCHEMA.safeParse({ ...MINIMAL, platforms: { api: { format: { tabs: true } } } }).success).toBe(
+            false,
+        );
     });
 });

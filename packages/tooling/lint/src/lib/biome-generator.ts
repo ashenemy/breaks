@@ -2,7 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 
-import { buildBiomeConfig, type BiomeConfig } from './biome-config.js';
+import { type BiomeConfig, buildBiomeConfig } from './biome-config.js';
 import { computeConfigHash, HashCache } from './config-hash.js';
 import { DEFAULT_RULES_PATH, RulesLoader } from './rules-loader.js';
 

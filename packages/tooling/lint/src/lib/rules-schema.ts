@@ -61,8 +61,14 @@ const IMPORTS = z.strictObject({
     'type-imports': z.boolean().default(true),
     'type-exports': z.boolean().default(true),
     sort: z.boolean().default(true),
-    groups: z.array(z.enum(['builtin', 'external', 'scope', 'relative'])).min(1).default(['builtin', 'external', 'scope', 'relative']),
-    scope: z.string().regex(/^@[a-z0-9-]+$/, 'npm-scope вида @market').default('@market'),
+    groups: z
+        .array(z.enum(['builtin', 'external', 'scope', 'relative']))
+        .min(1)
+        .default(['builtin', 'external', 'scope', 'relative']),
+    scope: z
+        .string()
+        .regex(/^@[a-z0-9-]+$/, 'npm-scope вида @market')
+        .default('@market'),
     'no-default-export': z.boolean().default(true),
     'no-export-all': z.boolean().default(true),
     'export-exceptions': z.array(z.string()).default(['**/eslint.config.*', '**/vitest.config.*', '**/vite.config.*']),
@@ -83,7 +89,10 @@ const ANGULAR = z.strictObject({
 
 const I18N = z.strictObject({
     'forbid-hardcoded-text': z.boolean().default(true),
-    locales: z.array(z.string().regex(/^[a-z]{2}$/)).min(1).default(['hy', 'ru', 'en']),
+    locales: z
+        .array(z.string().regex(/^[a-z]{2}$/))
+        .min(1)
+        .default(['hy', 'ru', 'en']),
     'template-globs': z.array(z.string()).default(['**/*.html']),
     'native-globs': z.array(z.string()).default(['packages/ui/ui-native/**/*.ts']),
 });
@@ -130,9 +139,13 @@ const OVERLAP = z
     });
 
 /** Переопределение раздела по платформе: те же ключи, все необязательные и без умолчаний. */
-export function overrideOf<T extends z.ZodRawShape>(section: z.ZodObject<T>): z.ZodObject<{ [K in keyof T]: z.ZodOptional<z.ZodType> }> {
+export function overrideOf<T extends z.ZodRawShape>(
+    section: z.ZodObject<T>,
+): z.ZodObject<{ [K in keyof T]: z.ZodOptional<z.ZodType> }> {
     const entries = Object.entries(section.shape).map(([key, field]) => {
-        const inner = (field instanceof z.ZodDefault || field instanceof z.ZodPrefault ? field.unwrap() : field) as z.ZodType;
+        const inner = (
+            field instanceof z.ZodDefault || field instanceof z.ZodPrefault ? field.unwrap() : field
+        ) as z.ZodType;
         return [key, inner.optional()] as const;
     });
     return z.strictObject(Object.fromEntries(entries) as { [K in keyof T]: z.ZodOptional<z.ZodType> });

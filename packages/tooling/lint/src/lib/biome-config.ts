@@ -28,7 +28,17 @@ const BIOME_RULE_GROUPS: Record<string, string> = {
 };
 
 /** Каталоги вне линтинга и форматирования. */
-const EXCLUDED = ['!**/dist', '!**/out-tsc', '!**/coverage', '!**/test-output', '!**/.nx', '!**/node_modules', '!tmp'];
+const EXCLUDED = [
+    '!**/dist',
+    '!**/out-tsc',
+    '!**/coverage',
+    '!**/test-output',
+    '!**/.nx',
+    '!**/node_modules',
+    '!tmp',
+    '!eslint.config.mjs',
+    '!**/*.template',
+];
 
 export function biomeSchemaUrl(version: string): string {
     return `https://biomejs.dev/schemas/${version}/schema.json`;

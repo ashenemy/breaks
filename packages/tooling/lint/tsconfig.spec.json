@@ -2,16 +2,9 @@
     "extends": "../../../tsconfig.base.json",
     "compilerOptions": {
         "outDir": "./out-tsc/vitest",
-        "types": [
-            "node",
-            "vitest/importMeta",
-            "vite/client"
-        ]
+        "types": ["node", "vitest/importMeta", "vite/client"]
     },
-    "include": [
-        "vitest.config.mts",
-        "test/**/*.ts"
-    ],
+    "include": ["vitest.config.mts", "test/**/*.ts"],
     "references": [
         {
             "path": "./tsconfig.lib.json"

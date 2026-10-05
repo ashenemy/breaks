@@ -6,7 +6,15 @@ import { fileURLToPath } from 'node:url';
 
 import { afterAll, describe, expect, it } from 'vitest';
 
-import { BiomeGenerator, buildBiomeConfig, computeConfigHash, detectBiomeVersion, HashCache, loadRules, RulesConfigError } from '../../src/index.js';
+import {
+    BiomeGenerator,
+    buildBiomeConfig,
+    computeConfigHash,
+    detectBiomeVersion,
+    HashCache,
+    loadRules,
+    RulesConfigError,
+} from '../../src/index.js';
 
 const WORKSPACE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..');
 const RULES_PATH = join(WORKSPACE_ROOT, 'packages', 'tooling', 'lint', 'rules.toml');
@@ -30,7 +38,13 @@ describe('buildBiomeConfig', () => {
     it('переносит [format] в форматтер Biome', () => {
         const config = buildBiomeConfig(rules, '2.5.15');
         expect(config.$schema).toBe('https://biomejs.dev/schemas/2.5.15/schema.json');
-        expect(config.formatter).toEqual({ enabled: true, indentStyle: 'space', indentWidth: 4, lineEnding: 'lf', lineWidth: 120 });
+        expect(config.formatter).toEqual({
+            enabled: true,
+            indentStyle: 'space',
+            indentWidth: 4,
+            lineEnding: 'lf',
+            lineWidth: 120,
+        });
         expect(config.javascript.formatter).toEqual({ quoteStyle: 'single', trailingCommas: 'all' });
         expect(config.json.formatter.indentWidth).toBe(4);
         expect(config.vcs).toEqual({ clientKind: 'git', enabled: true, useIgnoreFile: true });
@@ -59,7 +73,9 @@ describe('buildBiomeConfig', () => {
     });
 
     it('отклоняет неизвестное правило Biome', () => {
-        expect(() => buildBiomeConfig({ ...rules, overlap: { biome: ['noMagic'], eslint: [] } }, '2.5.15')).toThrow(/noMagic/);
+        expect(() => buildBiomeConfig({ ...rules, overlap: { biome: ['noMagic'], eslint: [] } }, '2.5.15')).toThrow(
+            /noMagic/,
+        );
     });
 });
 
@@ -107,7 +123,9 @@ describe('BiomeGenerator', () => {
         expect(second.written).toBe(false);
         expect(second.hash).toBe(first.hash);
 
-        expect(new BiomeGenerator({ workspaceRoot: root, rulesPath, force: true }, '2.5.15').generate().written).toBe(true);
+        expect(new BiomeGenerator({ workspaceRoot: root, rulesPath, force: true }, '2.5.15').generate().written).toBe(
+            true,
+        );
 
         rmSync(first.filePath);
         expect(new BiomeGenerator({ workspaceRoot: root, rulesPath }, '2.5.15').generate().written).toBe(true);
@@ -125,7 +143,9 @@ describe('BiomeGenerator', () => {
         const root = createTempRoot();
         const rulesPath = join(root, 'rules.toml');
         writeFileSync(rulesPath, '[format]\nindent = 1\n');
-        expect(() => new BiomeGenerator({ workspaceRoot: root, rulesPath }, '2.5.15').generate()).toThrow(RulesConfigError);
+        expect(() => new BiomeGenerator({ workspaceRoot: root, rulesPath }, '2.5.15').generate()).toThrow(
+            RulesConfigError,
+        );
         expect(existsSync(join(root, 'biome.json'))).toBe(false);
     });
 
@@ -140,10 +160,16 @@ describe('BiomeGenerator', () => {
         writeFileSync(rulesPath, readFileSync(RULES_PATH, 'utf8'));
         new BiomeGenerator({ workspaceRoot: root, rulesPath }, detectBiomeVersion(WORKSPACE_ROOT)).generate();
         mkdirSync(join(root, 'src'));
-        writeFileSync(join(root, 'src', 'sample.ts'), "export function sample(value: any): string {\n    return String(value);\n}\n");
+        writeFileSync(
+            join(root, 'src', 'sample.ts'),
+            'export function sample(value: any): string {\n    return String(value);\n}\n',
+        );
 
         const biomeBin = join(WORKSPACE_ROOT, 'node_modules', '@biomejs', 'biome', 'bin', 'biome');
-        const result = spawnSync(process.execPath, [biomeBin, 'lint', '--vcs-enabled=false', 'src/sample.ts'], { cwd: root, encoding: 'utf8' });
+        const result = spawnSync(process.execPath, [biomeBin, 'lint', '--vcs-enabled=false', 'src/sample.ts'], {
+            cwd: root,
+            encoding: 'utf8',
+        });
         expect(result.stdout + result.stderr).toContain('noExplicitAny');
         expect(result.status).toBe(1);
     }, 60_000);

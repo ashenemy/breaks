@@ -18,7 +18,9 @@ export class RulesConfigError extends Error {
     public readonly issues: readonly RulesIssue[];
 
     constructor(filePath: string, issues: readonly RulesIssue[]) {
-        super(`Некорректный ${filePath}:\n${issues.map((issue) => `  - ${issue.path || '<корень>'}: ${issue.message}`).join('\n')}`);
+        super(
+            `Некорректный ${filePath}:\n${issues.map((issue) => `  - ${issue.path || '<корень>'}: ${issue.message}`).join('\n')}`,
+        );
         this.name = 'RulesConfigError';
         this.filePath = filePath;
         this.issues = issues;
