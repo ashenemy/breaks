@@ -1,5 +1,5 @@
 {
-    "extends": "../../tsconfig.base.json",
+    "extends": "../tsconfig.base.json",
     "compilerOptions": {
         "composite": false,
         "declaration": false,
@@ -8,7 +8,15 @@
         "module": "esnext",
         "moduleResolution": "bundler",
         "noEmit": true,
-        "types": ["node"]
+        "types": [
+            "node"
+        ],
+        "allowJs": true,
+        "checkJs": false
     },
-    "include": ["**/*.ts", "**/*.mts"]
+    "include": [
+        "**/*.ts",
+        "**/*.mts",
+        "**/*.mjs"
+    ]
 }

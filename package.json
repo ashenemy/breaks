@@ -16,7 +16,15 @@
         "test": "nx run-many -t test --all",
         "lint": "nx run-many -t lint --all",
         "typecheck": "nx run-many -t typecheck --all",
-        "test:boundaries": "vitest run --root tools/boundaries"
+        "affected": "nx affected -t lint typecheck test build",
+        "affected:build": "nx affected -t build",
+        "affected:lint": "nx affected -t lint",
+        "affected:test": "nx affected -t test",
+        "affected:typecheck": "nx affected -t typecheck",
+        "check:generated": "node tools/generated/check-generated-projects.mjs",
+        "test:boundaries": "vitest run --root tools boundaries",
+        "test:tools": "vitest run --root tools",
+        "ci": "pnpm check:generated && pnpm test:tools && nx affected -t lint typecheck test build"
     },
     "dependencies": {},
     "devDependencies": {
