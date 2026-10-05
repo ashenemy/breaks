@@ -1,0 +1,32 @@
+{
+    "name": "tooling-lint-e2e",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "packages/tooling/lint-e2e/src",
+    "projectType": "library",
+    "tags": ["scope:shared", "type:tooling", "platform:api"],
+    "metadata": {
+        "description": "E2E раннера линтинга: фикстуры-нарушения для каждого правила rules.toml",
+        "generator": "@market/tooling:lib"
+    },
+    "targets": {
+        "test": {
+            "executor": "@market/tooling:vitest",
+            "outputs": ["{projectRoot}/test-output"],
+            "options": {},
+            "configurations": {
+                "ci": {
+                    "coverage": true
+                }
+            },
+            "dependsOn": ["tooling-lint:build"]
+        },
+        "e2e": {
+            "executor": "@market/tooling:vitest",
+            "dependsOn": ["tooling-lint:build"],
+            "outputs": ["{projectRoot}/test-output"],
+            "options": {},
+            "cache": false
+        }
+    },
+    "implicitDependencies": ["tooling-lint"]
+}
