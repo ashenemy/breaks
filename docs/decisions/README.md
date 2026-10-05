@@ -8,7 +8,7 @@
 | № | Тема | Состояние |
 |---|---|---|
 | 0001 | Регистр имён файлов (`index.ts` в нижнем регистре), структура `src/@types`, `src/lib`, `test/` | proposed |
-| 0002 | Фиксация версий Node, Angular, Tailwind, NestJS, NativeScript, Nx | proposed |
+| 0002 | Фиксация версий Node, Angular, Tailwind, NestJS, NativeScript, Nx | accepted ([ADR-0002](ADR-0002-versions.md)) |
 | 0003 | AWS: регион, ECS Fargate, MongoDB Atlas, управляемые сервисы | proposed |
 | 0004 | IaC: Terraform (провайдеры AWS, MongoDB Atlas, ClickHouse Cloud) | accepted |
 | 0005 | Тестовый раннер: Vitest для всех проектов (Nest через SWC-плагин), Playwright для E2E | accepted |
