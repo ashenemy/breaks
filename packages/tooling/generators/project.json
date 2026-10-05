@@ -8,6 +8,10 @@
         "type:tooling",
         "platform:api"
     ],
+    "metadata": {
+        "description": "Generators of the workspace: wrappers over official Nx plugins",
+        "generator": "@nx/plugin:plugin"
+    },
     "targets": {
         "build": {
             "executor": "@nx/js:tsc",
