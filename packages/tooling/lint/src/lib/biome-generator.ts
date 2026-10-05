@@ -41,13 +41,15 @@ export class BiomeGenerator {
         const rulesToml = readFileSync(rulesPath, 'utf8');
         const rules = new RulesLoader(rulesPath).parse(rulesToml);
         const config = buildBiomeConfig(rules, this.__biomeVersion);
-        const hash = computeConfigHash(rulesToml, { [TOOL]: this.__biomeVersion });
+        const content = `${JSON.stringify(config, null, rules.format.indent)}\n`;
+        // Хеш от результата, а не от входов: изменение самого генератора тоже перегенерирует файл.
+        const hash = computeConfigHash(content, { [TOOL]: this.__biomeVersion });
         const filePath = join(workspaceRoot, BIOME_CONFIG_FILE);
         const cache = new HashCache(workspaceRoot);
 
         const written = force || !existsSync(filePath) || !cache.isFresh(TOOL, hash);
         if (written) {
-            writeFileSync(filePath, `${JSON.stringify(config, null, rules.format.indent)}\n`);
+            writeFileSync(filePath, content);
             cache.write(TOOL, hash);
         }
         return { config, filePath, hash, written };

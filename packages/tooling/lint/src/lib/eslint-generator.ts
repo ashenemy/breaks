@@ -46,7 +46,8 @@ export class EslintGenerator {
         const rulesToml = readFileSync(rulesPath, 'utf8');
         const rules = new RulesLoader(rulesPath).parse(rulesToml);
         const content = buildEslintConfig(rules, this.__features);
-        const hash = computeConfigHash(rulesToml, {
+        // Хеш от результата, а не от входов: изменение самого генератора тоже перегенерирует файл.
+        const hash = computeConfigHash(content, {
             ...this.__versions,
             'features.angular': String(this.__features.angular),
         });

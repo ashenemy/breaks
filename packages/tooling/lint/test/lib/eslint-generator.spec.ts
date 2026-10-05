@@ -173,6 +173,27 @@ describe('сгенерированный конфиг в реальном ESLint
         );
     });
 
+    it('допускает ключи в стиле переменных окружения, но не произвольные', async () => {
+        const env =
+            "export const ENV: Record<string, string> = { APP__MODULES__CATALOG__PAGE_SIZE: '50', APP_ENV: 'dev' };\n";
+        expect(await ruleIds(env)).toEqual([]);
+        const mixed = "export const ENV: Record<string, string> = { APP__catalog__Size: '50' };\n";
+        expect(await ruleIds(mixed)).toContain('@typescript-eslint/naming-convention');
+    });
+
+    it('разрешает PascalCase у фабрик декораторов только в *.decorator.ts', async () => {
+        const factory =
+            'export function InjectConfig(token: symbol): ParameterDecorator {\n    return () => void token;\n}\n';
+        expect(await ruleIds(factory, 'packages/core/sample/src/lib/inject-config.decorator.ts')).toEqual([]);
+        expect(await ruleIds(factory)).toContain('@typescript-eslint/naming-convention');
+        expect(
+            await ruleIds(
+                'export class Store {\n    private cache: number = 1;\n}\n',
+                'packages/core/sample/src/lib/x.decorator.ts',
+            ),
+        ).toContain('@typescript-eslint/naming-convention');
+    });
+
     it('пропускает код по конвенциям', async () => {
         const code = [
             'export const MAX_RETRY_COUNT: number = 3;',

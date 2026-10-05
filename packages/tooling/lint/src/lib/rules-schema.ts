@@ -50,6 +50,8 @@ const NAMING = z.strictObject({
     private: NAMING_RULE.prefault({ format: 'camelCase', 'leading-underscore': 'requireDouble' }),
     types: CASE.default('PascalCase'),
     'exported-functions': z.enum(['function', 'const']).default('function'),
+    /** Файлы фабрик декораторов (`@Inject()`, `@Roles()`): функции в них именуются PascalCase, как в Nest и Angular. */
+    'decorator-files': z.array(z.string()).default(['**/*.decorator.ts']),
 });
 
 const MEMBERS = z.strictObject({

@@ -50,8 +50,12 @@ export const PLATFORM_GLOBS: Record<'api' | 'native' | 'shared' | 'web', string[
 
 const MEMBER_SELECTORS = ['classProperty', 'classMethod', 'accessor'];
 
-function namingRules(naming: NamingRules): RuleSet {
-    const options: Record<string, unknown>[] = [
+/** Ключи в стиле переменных окружения (`APP__MODULES__CATALOG__PAGE_SIZE`): встроенный UPPER_CASE не допускает `__`. */
+const ENV_KEY_PATTERN = '^[A-Z][A-Z0-9_]*$';
+
+function namingOptions(naming: NamingRules, decoratorFactories = false): Record<string, unknown>[] {
+    return [
+        ...(decoratorFactories ? [{ selector: 'function', format: ['PascalCase', 'camelCase'] }] : []),
         { selector: 'variable', modifiers: ['exported', 'const'], format: [naming['export-const']] },
         { selector: 'classProperty', modifiers: ['public', 'static', 'readonly'], format: [naming['static-readonly']] },
         ...(['private', 'protected', 'public'] as const).map((modifier) => ({
@@ -64,11 +68,19 @@ function namingRules(naming: NamingRules): RuleSet {
         { selector: 'variable', modifiers: ['const'], format: ['camelCase', 'UPPER_CASE'] },
         // Ключи объектов и типов: идентификаторы правил, переменные окружения, ключи TOML в кавычках.
         { selector: ['objectLiteralProperty', 'typeProperty'], modifiers: ['requiresQuotes'], format: null },
+        {
+            selector: ['objectLiteralProperty', 'typeProperty'],
+            filter: { regex: ENV_KEY_PATTERN, match: true },
+            format: null,
+        },
         { selector: ['objectLiteralProperty', 'typeProperty'], format: ['camelCase', 'UPPER_CASE'] },
         { selector: 'import', format: ['camelCase', 'PascalCase'] },
         { selector: 'default', format: ['camelCase'], leadingUnderscore: 'allow' },
     ];
-    const rules: RuleSet = { '@typescript-eslint/naming-convention': ['error', ...options] };
+}
+
+function namingRules(naming: NamingRules): RuleSet {
+    const rules: RuleSet = { '@typescript-eslint/naming-convention': ['error', ...namingOptions(naming)] };
     if (naming['exported-functions'] === 'function') {
         rules['no-restricted-syntax'] = [
             'error',
@@ -266,6 +278,11 @@ export function buildEslintConfig(rules: RulesConfig, features: EslintFeatures):
             },
         },
         { files: TS_FILES, rules: tsRules(rules) },
+        // Фабрики декораторов (`@Inject()`, `@Roles()`) именуются PascalCase, как в Nest и Angular.
+        {
+            files: rules.naming['decorator-files'],
+            rules: { '@typescript-eslint/naming-convention': ['error', ...namingOptions(rules.naming, true)] },
+        },
         { files: rules.imports['export-exceptions'], rules: { 'no-restricted-syntax': 'off' } },
         {
             files: TS_FILES,
