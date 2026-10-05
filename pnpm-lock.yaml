@@ -260,6 +260,12 @@ importers:
         specifier: 4.6.5
         version: 4.6.5
 
+  packages/tooling/lint-e2e:
+    dependencies:
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+
 packages:
 
   '@acemir/cssom@0.9.31':

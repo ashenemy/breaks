@@ -8,6 +8,9 @@
         },
         {
             "path": "./packages/tooling/lint"
+        },
+        {
+            "path": "./packages/tooling/lint-e2e"
         }
     ]
 }
