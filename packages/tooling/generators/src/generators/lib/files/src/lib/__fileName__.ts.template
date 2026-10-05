@@ -1,0 +1,6 @@
+import type { <%= className %>Info } from '../@types/index.js';
+
+/** Стартовая реализация: заменить реальным API пакета, сохранив структуру. */
+export function <%= propertyName %>Info(): <%= className %>Info {
+    return { name: '<%= name %>' };
+}

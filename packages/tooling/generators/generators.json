@@ -1,0 +1,9 @@
+{
+    "generators": {
+        "lib": {
+            "factory": "./dist/generators/lib/generator#libGenerator",
+            "schema": "./dist/generators/lib/schema.json",
+            "description": "Библиотека воркспейса: обёртка над @nx/js:library со структурой src/@types, src/lib, src/index.ts, test/, тегами, README и маркером генератора"
+        }
+    }
+}

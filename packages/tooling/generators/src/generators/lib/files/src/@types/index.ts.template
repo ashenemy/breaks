@@ -1,0 +1,7 @@
+/**
+ * Все типы пакета <%= importPath %>: внутренние и публичные (02-code-conventions.md, раздел 1).
+ * Публичные типы реэкспортируются через src/index.ts в форме `export type`.
+ */
+export type <%= className %>Info = {
+    name: string;
+};

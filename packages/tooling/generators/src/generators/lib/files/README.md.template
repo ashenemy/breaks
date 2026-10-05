@@ -1,0 +1,37 @@
+# <%= importPath %>
+
+<%= description %>
+
+| | |
+|---|---|
+| Проект Nx | `<%= name %>` |
+| Каталог | `<%= directory %>` |
+| Теги | `<%- tags.join('`, `') %>` |
+| Создан | `<%= generator %>` |
+
+## Назначение
+
+<%= description %>
+
+## Публичный API
+
+Экспортируется только через `src/index.ts`, строго именованно:
+
+- `<%= propertyName %>Info(): <%= className %>Info` — стартовая функция, заменить реальным API.
+- `<%= className %>Info` — тип результата (все типы пакета живут в `src/@types/index.ts`).
+
+## Примеры
+
+```ts
+import { <%= propertyName %>Info } from '<%= importPath %>';
+
+<%= propertyName %>Info(); // { name: '<%= name %>' }
+```
+
+## Команды
+
+| Команда | Что делает |
+|---|---|
+| `nx lint <%= name %>` | ESLint с правилами воркспейса и границами модулей |
+| `nx test <%= name %>` | Vitest, тесты из `test/`; `--coverage` проверяет порог <%= coverageThreshold %>% строк и веток |
+| `nx build <%= name %>` | Сборка `tsc` в `dist/` |

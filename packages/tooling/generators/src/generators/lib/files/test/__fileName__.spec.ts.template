@@ -1,0 +1,9 @@
+import { describe, expect, it } from 'vitest';
+
+import { <%= propertyName %>Info } from '../src/index.js';
+
+describe('<%= propertyName %>Info', () => {
+    it('возвращает имя пакета', () => {
+        expect(<%= propertyName %>Info()).toEqual({ name: '<%= name %>' });
+    });
+});

@@ -1,0 +1,38 @@
+{
+    "name": "tooling-generators",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "packages/tooling/generators/src",
+    "projectType": "library",
+    "tags": [
+        "scope:shared",
+        "type:tooling",
+        "platform:api"
+    ],
+    "targets": {
+        "build": {
+            "executor": "@nx/js:tsc",
+            "outputs": [
+                "{options.outputPath}"
+            ],
+            "options": {
+                "outputPath": "packages/tooling/generators/dist",
+                "main": "packages/tooling/generators/src/index.ts",
+                "tsConfig": "packages/tooling/generators/tsconfig.lib.json",
+                "rootDir": "packages/tooling/generators/src",
+                "generatePackageJson": false,
+                "assets": [
+                    {
+                        "input": "./packages/tooling/generators/src",
+                        "glob": "**/!(*.ts)",
+                        "output": "."
+                    },
+                    {
+                        "input": "./packages/tooling/generators/src",
+                        "glob": "**/*.d.ts",
+                        "output": "."
+                    }
+                ]
+            }
+        }
+    }
+}

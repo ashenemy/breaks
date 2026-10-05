@@ -1,0 +1,2 @@
+export type { <%= className %>Info } from './@types/index.js';
+export { <%= propertyName %>Info } from './lib/<%= fileName %>.js';

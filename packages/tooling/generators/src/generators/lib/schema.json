@@ -1,0 +1,67 @@
+{
+    "$schema": "https://json-schema.org/schema",
+    "$id": "MarketLib",
+    "title": "Библиотека воркспейса",
+    "description": "Обёртка над @nx/js:library: tsc, Vitest, ESLint, project.json, структура src/@types, src/lib, src/index.ts, test/, теги scope/type/platform, README и маркер генератора.",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Имя проекта в kebab-case (например, ts-utils).",
+            "$default": {
+                "$source": "argv",
+                "index": 0
+            },
+            "x-prompt": "Имя библиотеки (kebab-case)?",
+            "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+        },
+        "type": {
+            "type": "string",
+            "description": "Роль библиотеки: тег type:*.",
+            "enum": ["contracts", "core", "infra", "module", "tooling", "ui"],
+            "x-prompt": {
+                "message": "Тип библиотеки?",
+                "type": "list",
+                "items": [
+                    { "value": "core", "label": "core — утилиты и общая инфраструктура кода" },
+                    { "value": "contracts", "label": "contracts — Zod-схемы, типы, DTO" },
+                    { "value": "ui", "label": "ui — UI-компоненты и дизайн-токены" },
+                    { "value": "infra", "label": "infra — клиенты БД, очередей, провайдеров" },
+                    { "value": "tooling", "label": "tooling — инструменты разработки" },
+                    { "value": "module", "label": "module — доменный модуль (directory обязателен)" }
+                ]
+            }
+        },
+        "platform": {
+            "type": "string",
+            "description": "Среда выполнения: тег platform:*.",
+            "enum": ["api", "web", "native", "shared"],
+            "default": "shared"
+        },
+        "scope": {
+            "type": "string",
+            "description": "Домен (kebab-case) или shared: тег scope:*.",
+            "default": "shared",
+            "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+        },
+        "directory": {
+            "type": "string",
+            "description": "Каталог проекта. По умолчанию packages/<type>/<name>; для type=module обязателен."
+        },
+        "importPath": {
+            "type": "string",
+            "description": "Имя пакета для импорта. По умолчанию @market/<name>."
+        },
+        "description": {
+            "type": "string",
+            "description": "Назначение пакета для README и project.json."
+        },
+        "skipFormat": {
+            "type": "boolean",
+            "description": "Не форматировать файлы после генерации.",
+            "default": false,
+            "x-priority": "internal"
+        }
+    },
+    "required": ["name", "type"]
+}
