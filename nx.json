@@ -54,7 +54,7 @@
                 "default",
                 "{workspaceRoot}/biome.json",
                 "{workspaceRoot}/eslint.config.mjs",
-                "{workspaceRoot}/tools/boundaries/dep-constraints.mjs"
+                "{workspaceRoot}/packages/tooling/lint/rules.toml"
             ],
             "cache": true
         },

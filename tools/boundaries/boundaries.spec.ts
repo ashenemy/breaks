@@ -1,16 +1,18 @@
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
+import { detectToolVersions, EslintGenerator } from '../../packages/tooling/lint/src/index.js';
+
 /**
  * Приёмочный тест E00.01.02: правило `@nx/enforce-module-boundaries` с ограничениями из
- * `tools/boundaries/dep-constraints.mjs` ловит запрещённые импорты и пропускает разрешённые.
+ * `[boundaries]` в `packages/tooling/lint/rules.toml` ловит запрещённые импорты и пропускает разрешённые.
  *
  * Правило работает по кэшу графа проектов, поэтому проверка идёт во временном воркспейсе
  * внутри `tmp/` (в `.gitignore`; пакеты разрешаются из корневого `node_modules` подъёмом по
- * дереву). Туда копируются реальные `eslint.config.mjs` и файл ограничений, создаются
+ * дереву). Туда генерируется `eslint.config.mjs` из реального `rules.toml`, создаются
  * проекты-фикстуры с тегами и файлы с импортами, строится граф (`nx graph`) и запускается ESLint.
  */
 
@@ -51,7 +53,7 @@ type ProcessOutput = {
 const RULE_ID = '@nx/enforce-module-boundaries';
 const IMPORT_SCOPE = '@fixture';
 const WORKSPACE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const SHARED_FILES = ['eslint.config.mjs', 'tools/boundaries/dep-constraints.mjs'];
+const RULES_PATH = join(WORKSPACE_ROOT, 'packages', 'tooling', 'lint', 'rules.toml');
 
 const PROJECTS: FixtureProject[] = [
     { name: 'api', projectType: 'application', root: 'apps/api', tags: ['scope:shared', 'type:app', 'platform:api'] },
@@ -260,10 +262,7 @@ function createFixtureWorkspace(): string {
     mkdirSync(tmpDir, { recursive: true });
     const root = mkdtempSync(join(tmpDir, 'boundaries-'));
 
-    for (const relativePath of SHARED_FILES) {
-        mkdirSync(dirname(join(root, relativePath)), { recursive: true });
-        copyFileSync(join(WORKSPACE_ROOT, relativePath), join(root, relativePath));
-    }
+    new EslintGenerator({ workspaceRoot: root, rulesPath: RULES_PATH }, detectToolVersions(WORKSPACE_ROOT)).generate();
 
     writeJson(join(root, 'package.json'), { name: 'boundaries-fixture', private: true });
     writeJson(join(root, 'nx.json'), { useDaemonProcess: false, plugins: [] });
