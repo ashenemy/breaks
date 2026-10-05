@@ -1,0 +1,54 @@
+{
+    "$schema": "https://json-schema.org/schema",
+    "$id": "MarketVitest",
+    "title": "Vitest с флагами в стиле Jest",
+    "description": "Запускает Vitest проекта. Понимает --testPathPattern из приёмочных команд эпиков и переводит его в фильтр файлов Vitest.",
+    "type": "object",
+    "properties": {
+        "testPathPattern": {
+            "description": "Фильтр файлов тестов (подстрока или regex пути), как у Jest. Можно указать несколько раз.",
+            "oneOf": [
+                { "type": "string" },
+                { "type": "array", "items": { "type": "string" } }
+            ]
+        },
+        "testNamePattern": {
+            "type": "string",
+            "description": "Фильтр по имени теста (--testNamePattern / -t)."
+        },
+        "coverage": {
+            "type": "boolean",
+            "description": "Собрать покрытие и проверить пороги из vitest.config.",
+            "default": false
+        },
+        "watch": {
+            "type": "boolean",
+            "description": "Режим наблюдения вместо однократного запуска.",
+            "default": false
+        },
+        "update": {
+            "type": "boolean",
+            "description": "Обновить снапшоты.",
+            "default": false
+        },
+        "passWithNoTests": {
+            "type": "boolean",
+            "description": "Не считать ошибкой отсутствие тестов.",
+            "default": false
+        },
+        "bail": {
+            "type": "number",
+            "description": "Остановиться после N упавших тестов."
+        },
+        "reporters": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Репортеры Vitest."
+        },
+        "configFile": {
+            "type": "string",
+            "description": "Путь к конфигу Vitest относительно каталога проекта."
+        }
+    },
+    "additionalProperties": false
+}

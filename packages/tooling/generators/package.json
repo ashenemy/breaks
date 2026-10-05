@@ -22,9 +22,11 @@
         "tslib": "2.8.1"
     },
     "generators": "./generators.json",
+    "executors": "./executors.json",
     "files": [
         "dist",
         "!**/*.tsbuildinfo",
-        "generators.json"
+        "generators.json",
+        "executors.json"
     ]
 }

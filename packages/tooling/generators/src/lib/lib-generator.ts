@@ -7,6 +7,7 @@ import { listJsonFiles, reformatJsonFiles } from './json-files';
 import { normalizeLibOptions } from './normalize-lib-options';
 import { markGeneratedProject } from './project-marker';
 import { applyStandardStructure } from './standard-structure';
+import { setVitestTestTarget } from './test-target';
 
 type NxLibraryOptions = Parameters<typeof libraryGenerator>[1];
 
@@ -44,6 +45,7 @@ export class LibGenerator {
             description: this.__options.description,
             generator: LIB_GENERATOR,
         });
+        setVitestTestTarget(this.__tree, this.__options.name);
         reformatJsonFiles(this.__tree, [...listJsonFiles(this.__tree, this.__options.directory), 'tsconfig.json']);
 
         if (!this.__options.skipFormat) {

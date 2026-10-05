@@ -1,0 +1,9 @@
+{
+    "executors": {
+        "vitest": {
+            "implementation": "./dist/executors/vitest/executor#vitestExecutor",
+            "schema": "./dist/executors/vitest/schema.json",
+            "description": "Vitest проекта с поддержкой флагов в стиле Jest (--testPathPattern) из приёмочных команд эпиков"
+        }
+    }
+}

@@ -37,6 +37,18 @@
                     }
                 ]
             }
+        },
+        "test": {
+            "executor": "@market/tooling:vitest",
+            "outputs": [
+                "{projectRoot}/test-output"
+            ],
+            "options": {},
+            "configurations": {
+                "ci": {
+                    "coverage": true
+                }
+            }
         }
     }
 }

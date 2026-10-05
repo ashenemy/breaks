@@ -6,6 +6,9 @@ export const GENERATOR_COLLECTION = '@market/tooling';
 /** Полное имя генератора библиотек, записывается в маркер проекта. */
 export const LIB_GENERATOR = `${GENERATOR_COLLECTION}:lib`;
 
+/** Executor Vitest воркспейса: цель `test` сгенерированных проектов. */
+export const VITEST_EXECUTOR = `${GENERATOR_COLLECTION}:vitest`;
+
 /** Npm-scope импортов воркспейса (ADR-0002, правило 6). */
 export const IMPORT_SCOPE = '@market';
 

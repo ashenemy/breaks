@@ -61,6 +61,16 @@ describe('генератор lib: структура проекта', () => {
         });
     });
 
+    it('ставит цель test на executor воркспейса, понимающий --testPathPattern', () => {
+        const configuration = readProjectConfiguration(tree, 'ts-utils');
+        expect(configuration.targets?.['test']).toEqual({
+            executor: '@market/tooling:vitest',
+            outputs: ['{projectRoot}/test-output'],
+            options: {},
+            configurations: { ci: { coverage: true } },
+        });
+    });
+
     it('экспортирует публичный API только именованно через src/index.ts', () => {
         const index = read(tree, `${ROOT}/src/index.ts`);
         expect(index).toContain("export type { TsUtilsInfo } from './@types/index.js';");

@@ -56,5 +56,24 @@ export type GeneratedProjectMetadata = {
     generator: string;
 };
 
+/**
+ * Опции executor-а `@market/tooling:vitest` (зеркало `schema.json`).
+ * Принимает флаги в стиле Jest из приёмочных команд эпиков (`--testPathPattern`) и переводит их в аргументы Vitest.
+ */
+export type VitestExecutorSchema = {
+    bail?: number;
+    configFile?: string;
+    coverage?: boolean;
+    passWithNoTests?: boolean;
+    reporters?: string[];
+    testNamePattern?: string;
+    testPathPattern?: string | string[];
+    update?: boolean;
+    watch?: boolean;
+};
+
+/** Запуск дочернего процесса: подменяется в тестах executor-а. */
+export type ProcessRunner = (command: string, args: string[], cwd: string) => Promise<number>;
+
 /** Шаг пост-обработки дерева после официального генератора Nx. */
 export type TreeStep = (tree: Tree) => void;
