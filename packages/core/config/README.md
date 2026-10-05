@@ -35,16 +35,19 @@
 
 Экспортируется только через `src/index.ts`, строго именованно:
 
-- `ConfigLoader` (`new ConfigLoader(options).load()`), `loadConfig(options?)` — загрузка всех слоёв; возвращает `LoadedConfig` с `environment`, `tree` (итог), `fileTree` (только файлы TOML, нужно для запрета секретов в TOML) и `layers` (диагностика без значений).
+- `defineModuleConfig(name, schema)` → `ModuleConfigToken`: раздел `[modules.<name>]` (имя в `camelCase`) и его Zod-схема; `token.path` (`modules.<name>`), `token.envVariable(['pageSize'])` (`APP__MODULES__<NAME>__PAGE_SIZE`). Тип значений: `ModuleConfig<typeof TOKEN>`. Для защиты от опечаток в ключах используйте `z.strictObject`.
+- `ModuleConfigReader` (`new ModuleConfigReader(loadedConfig).read(token)`) — по токену доступен только собственный раздел (нет раздела — пустая таблица, работают умолчания схемы); результат проверен схемой, заморожен и кэшируется по токену. `loadModuleConfig(token, options?)` — то же одним вызовом с загрузкой с диска.
+- `ConfigValidationError` (наследует `ConfigError`, поле `module`) — раздел не прошёл схему: в каждой проблеме ключ, ожидаемый тип (сообщения Zod на русском) и для отсутствующего ключа подсказка, где его задать (TOML-ключ или переменная окружения).
+- `ConfigLoader` (`new ConfigLoader(options).load()`), `loadConfig(options?)` — загрузка всех слоёв; возвращает `LoadedConfig` с `environment`, `envPrefix`, `tree` (итог), `fileTree` (только файлы TOML, нужно для запрета секретов в TOML) и `layers` (диагностика без значений).
 - `ConfigLoaderOptions`: `configDir` (по умолчанию `<cwd>/config`), `dotenvPath` (`<cwd>/.env`, `null` отключает), `env` (`process.env`), `envPrefix` (`APP`), `environment`.
 - `ConfigError` — ошибка с `issues: { source, path, message }[]`: какой файл или переменная, какой ключ, что ожидалось.
-- `TomlLayer`, `DotenvFile`, `EnvOverrides`, `coerceEnvValue`, `envSegmentToKey`, `mergeEnv` — слои по отдельности.
+- `TomlLayer`, `DotenvFile`, `EnvOverrides`, `coerceEnvValue`, `envSegmentToKey`, `keyToEnvSegment`, `mergeEnv` — слои по отдельности.
 - `resolveEnvironment`, `isAppEnvironment`, `ENVIRONMENTS`, `ENVIRONMENT_VARIABLE` — окружение.
 - `deepMerge`, `deepFreeze`, `isConfigTree`, `parseToml` — примитивы слияния и разбора.
-- Константы `CONFIG_DIRECTORY`, `DOTENV_FILE`, `DEFAULT_LAYER_FILE`, `DEFAULT_ENV_PREFIX`, `ENV_SEPARATOR`.
-- Типы: `AppEnvironment`, `ConfigTree`, `ConfigValue`, `ConfigLayerInfo`, `ConfigLayerName`, `ConfigIssue`, `LoadedConfig`, `EnvRecord`, `EnvValues`, `EnvOverride`, `EnvOverridesResult`, `TomlLayerResult`.
+- Константы `CONFIG_DIRECTORY`, `DOTENV_FILE`, `DEFAULT_LAYER_FILE`, `DEFAULT_ENV_PREFIX`, `ENV_SEPARATOR`, `MODULES_SECTION`.
+- Типы: `AppEnvironment`, `ConfigTree`, `ConfigValue`, `ConfigLayerInfo`, `ConfigLayerName`, `ConfigIssue`, `LoadedConfig`, `ModuleConfig`, `ModuleSchema`, `EnvRecord`, `EnvValues`, `EnvOverride`, `EnvOverridesResult`, `TomlLayerResult`.
 
-Типизированные разделы модулей (`defineModuleConfig`, валидация Zod), запрет секретов в TOML с маскированием и `ConfigModule.forModule` для Nest добавляются задачами E00.03.02–E00.03.04.
+Запрет секретов в TOML с маскированием и `ConfigModule.forModule(token)` для Nest добавляются задачами E00.03.03–E00.03.04.
 
 ## Примеры
 
@@ -62,15 +65,27 @@ APP__MODULES__PAYMENTS__API_KEY=sk_live_…    # секрет: только ок
 ```
 
 ```ts
-import { ConfigError, loadConfig } from '@market/core-config';
+import { ConfigError, defineModuleConfig, loadConfig, loadModuleConfig, type ModuleConfig, ModuleConfigReader } from '@market/core-config';
+import { z } from 'zod';
 
+// modules/catalog/api: раздел модуля объявляется рядом с модулем
+export const CATALOG_CONFIG = defineModuleConfig(
+    'catalog',
+    z.strictObject({ pageSize: z.number().int().positive(), host: z.string() }),
+);
+export type CatalogConfig = ModuleConfig<typeof CATALOG_CONFIG>; // Readonly<{ pageSize: number; host: string }>
+
+// точка входа без Nest: один загруженный конфиг на процесс, по токену на модуль
 try {
-    const { environment, tree, layers } = loadConfig();
-    // environment === 'staging'; tree.modules.catalog.pageSize === 50
-    console.info(layers.map((layer) => `${layer.name}: ${layer.present ? 'есть' : 'нет'}`));
+    const reader = new ModuleConfigReader(loadConfig());
+    const catalog = reader.read(CATALOG_CONFIG); // { pageSize: 50, host: 'db' }, заморожен
+    const payments = loadModuleConfig(PAYMENTS_CONFIG); // короткая форма: загрузка с диска и чтение одного раздела
 } catch (error) {
     if (error instanceof ConfigError) {
-        // «APP__MODULES__CATALOG__PAGE_SIZE → modules.catalog.pageSize: ожидается число, получено "many"»
+        // Конфигурация модуля "catalog" не прошла валидацию:
+        //   - modules.catalog → pageSize: Неверный ввод: ожидалось число, получено строка
+        //   - modules.catalog → host: Неверный ввод: ожидалось строка, получено undefined
+        //     (ключ "host" в [modules.catalog] или переменная APP__MODULES__CATALOG__HOST)
         console.error(error.message);
         process.exit(1);
     }
@@ -85,4 +100,5 @@ try {
 | `nx lint core-config` | ESLint с правилами воркспейса и границами модулей |
 | `nx test core-config` | Vitest, тесты из `test/`; `--coverage` проверяет порог 90% строк и веток |
 | `nx test core-config --testPathPattern=loader` | Приёмка E00.03.01: слои, порядок слияния, переопределения, диагностика |
+| `nx test core-config --testPathPattern=define` | Приёмка E00.03.02: токены модулей, валидация Zod, изоляция разделов, ошибки старта |
 | `nx build core-config` | Сборка `tsc` в `dist/` |
