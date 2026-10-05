@@ -29,8 +29,10 @@ export {
     keyToEnvSegment,
 } from './lib/env-overrides.js';
 export { ENVIRONMENT_VARIABLE, ENVIRONMENTS, isAppEnvironment, resolveEnvironment } from './lib/environment.js';
+export { InjectModuleConfig } from './lib/inject-module-config.decorator.js';
 export { deepFreeze, deepMerge, isConfigTree } from './lib/merge.js';
 export { ConfigValidationError, loadModuleConfig, ModuleConfigReader } from './lib/module-config-reader.js';
+export { ConfigModule, LOADED_CONFIG, MODULE_CONFIG_READER } from './lib/nest-config-module.js';
 export {
     ConfigSecretError,
     DEFAULT_SECRET_POLICY,

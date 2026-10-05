@@ -96,9 +96,14 @@ describe('EnvOverrides', () => {
     });
 
     it('отвергает имена вне формата одной ошибкой на все переменные', () => {
-        const issues = issuesOf(() =>
-            overrides.collect({ APP__: '1', APP__a__B: '2', APP___X: '3', APP__OK__Y_: '4', APP__FINE: '5' }),
-        );
+        const env = Object.fromEntries([
+            ['APP__', '1'],
+            ['APP__a__B', '2'],
+            ['APP___X', '3'],
+            ['APP__OK__Y_', '4'],
+            ['APP__FINE', '5'],
+        ]);
+        const issues = issuesOf(() => overrides.collect(env));
         expect(issues.map((issue) => issue.source)).toEqual(['APP__', 'APP__OK__Y_', 'APP___X', 'APP__a__B']);
         expect(issues[0]?.message).toContain('APP__SEGMENT__SEGMENT');
     });

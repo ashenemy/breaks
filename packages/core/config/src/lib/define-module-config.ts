@@ -13,6 +13,9 @@ const MODULE_NAME_PATTERN = /^[a-z][a-zA-Z0-9]*$/;
  * а читать по токену можно только собственный раздел `modules.<name>`.
  */
 export class ModuleConfigToken<TSchema extends ModuleSchema = ModuleSchema> {
+    /** Ключ внедрения зависимостей (Nest): уникален для токена, читается в `@InjectModuleConfig(token)`. */
+    public readonly injectionToken: symbol;
+
     public readonly name: string;
 
     public readonly schema: TSchema;
@@ -29,6 +32,7 @@ export class ModuleConfigToken<TSchema extends ModuleSchema = ModuleSchema> {
         }
         this.name = name;
         this.schema = schema;
+        this.injectionToken = Symbol(`ModuleConfig(${name})`);
     }
 
     /** Путь раздела в дереве конфига: `modules.<name>`. */

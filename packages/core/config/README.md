@@ -47,16 +47,16 @@
 - `ModuleConfigReader` (`new ModuleConfigReader(loadedConfig).read(token)`) — по токену доступен только собственный раздел (нет раздела — пустая таблица, работают умолчания схемы); результат проверен схемой, заморожен и кэшируется по токену. `loadModuleConfig(token, options?)` — то же одним вызовом с загрузкой с диска.
 - `ConfigValidationError` (наследует `ConfigError`, поле `module`) — раздел не прошёл схему: в каждой проблеме ключ, ожидаемый тип (сообщения Zod на русском) и для отсутствующего ключа подсказка, где его задать (TOML-ключ или переменная окружения).
 - `SecretPolicy` (`isSecretKey`, `findSecretPaths`, `maskSecrets`, `assertNoSecrets`; слова и маска настраиваются), `DEFAULT_SECRET_POLICY`, `isSecretKey(key)`, `maskSecrets(value)`, `ConfigSecretError` (наследует `ConfigError`, поле `paths`), константы `SECRET_KEY_WORDS`, `SECRET_MASK`.
+- `ConfigModule` (Nest): `forRoot(options?)` подключается один раз в корневом модуле — загружает конфиг при старте и глобально предоставляет `LOADED_CONFIG` (`LoadedConfig`) и `MODULE_CONFIG_READER` (`ModuleConfigReader`); `forModule(...tokens)` подключается в модуле фичи и предоставляет его раздел по `token.injectionToken`; `InjectModuleConfig(token)` — декоратор параметра конструктора. Любая `ConfigError` при старте останавливает приложение.
 - `ConfigLoader` (`new ConfigLoader(options).load()`), `loadConfig(options?)` — загрузка всех слоёв с проверкой секретов; возвращает `LoadedConfig` с `environment`, `envPrefix`, `tree` (итог), `fileTree` (только файлы TOML) и `layers` (диагностика без значений).
 - `ConfigLoaderOptions`: `configDir` (по умолчанию `<cwd>/config`), `dotenvPath` (`<cwd>/.env`, `null` отключает), `env` (`process.env`), `envPrefix` (`APP`), `environment`, `secrets` (политика секретов).
 - `ConfigError` — ошибка с `issues: { source, path, message }[]`: какой файл или переменная, какой ключ, что ожидалось.
 - `TomlLayer`, `DotenvFile`, `EnvOverrides`, `coerceEnvValue`, `envSegmentToKey`, `keyToEnvSegment`, `envVariableFor`, `mergeEnv` — слои по отдельности.
 - `resolveEnvironment`, `isAppEnvironment`, `ENVIRONMENTS`, `ENVIRONMENT_VARIABLE` — окружение.
 - `deepMerge`, `deepFreeze`, `isConfigTree`, `parseToml` — примитивы слияния и разбора.
-- Константы `CONFIG_DIRECTORY`, `DOTENV_FILE`, `DEFAULT_LAYER_FILE`, `DEFAULT_ENV_PREFIX`, `ENV_SEPARATOR`, `MODULES_SECTION`.
+- Константы `CONFIG_DIRECTORY`, `DOTENV_FILE`, `DEFAULT_LAYER_FILE`, `DEFAULT_ENV_PREFIX`, `ENV_SEPARATOR`, `MODULES_SECTION`, `LOADED_CONFIG`, `MODULE_CONFIG_READER`.
 - Типы: `AppEnvironment`, `ConfigTree`, `ConfigValue`, `ConfigLayerInfo`, `ConfigLayerName`, `ConfigIssue`, `LoadedConfig`, `ModuleConfig`, `ModuleSchema`, `EnvRecord`, `EnvValues`, `EnvOverride`, `EnvOverridesResult`, `TomlLayerResult`.
 
-`ConfigModule.forModule(token)` для Nest добавляется задачей E00.03.04.
 
 ## Примеры
 
@@ -102,6 +102,26 @@ try {
 }
 ```
 
+```ts
+// Nest: корневой модуль приложения и модуль фичи
+import { Inject, Injectable, Module } from '@nestjs/common';
+import { ConfigModule, InjectModuleConfig, LOADED_CONFIG, type LoadedConfig, type ModuleConfig } from '@market/core-config';
+
+@Injectable()
+export class CatalogService {
+    constructor(
+        @InjectModuleConfig(CATALOG_CONFIG) private readonly __config: ModuleConfig<typeof CATALOG_CONFIG>,
+        @Inject(LOADED_CONFIG) private readonly __loaded: LoadedConfig, // всё дерево; в логи только maskSecrets(__loaded.tree)
+    ) {}
+}
+
+@Module({ imports: [ConfigModule.forModule(CATALOG_CONFIG)], providers: [CatalogService] })
+export class CatalogModule {}
+
+@Module({ imports: [ConfigModule.forRoot(), CatalogModule] }) // forRoot один раз; ConfigError останавливает старт
+export class AppModule {}
+```
+
 ## Команды
 
 | Команда | Что делает |
@@ -111,4 +131,5 @@ try {
 | `nx test core-config --testPathPattern=loader` | Приёмка E00.03.01: слои, порядок слияния, переопределения, диагностика |
 | `nx test core-config --testPathPattern=define` | Приёмка E00.03.02: токены модулей, валидация Zod, изоляция разделов, ошибки старта |
 | `nx test core-config --testPathPattern=secrets` | Приёмка E00.03.03: запрет секретов в TOML, маскирование |
+| `nx test core-config --testPathPattern=nest` | Приёмка E00.03.04: `ConfigModule.forRoot`/`forModule` в DI-контейнере Nest |
 | `nx build core-config` | Сборка `tsc` в `dist/` |
