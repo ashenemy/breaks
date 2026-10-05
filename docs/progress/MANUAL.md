@@ -8,10 +8,10 @@
 
 | Поле | Значение |
 |---|---|
-| Задача | E00.03.01 — `core/config`: загрузчик TOML + .env (см. `docs/epics/E00.03-config-module.md`) |
-| Ветка | `autopilot/E00.03.01` |
-| Подшаги | 1 ✅ каркас `core-config` (`nx g @market/tooling:lib config --type=core --platform=api`, `04c75ab`) и регистрация в корне (`bd644ac`); 2 ⏳ слои TOML: `TomlLayerReader`, `deepMerge`/`deepFreeze`, порядок default → `<env>` → local, `resolveEnvironment` (`APP_ENV`, затем `NODE_ENV`); 3 переопределение окружением: `APP__A__B=value` → `a.b`, `UPPER_SNAKE` → `camelCase`, приведение типа по текущему значению или как литерал TOML, чтение `.env` через `node:util.parseEnv` (process.env сильнее `.env`); 4 класс `ConfigLoader`/`loadConfig` с диагностикой слоёв, README, допущения, приёмка `nx test core-config --testPathPattern=loader` |
-| Следующее действие | Подшаг 2: тесты `test/lib/merge.spec.ts`, `toml-layer.spec.ts`, `environment.spec.ts` (красные), затем реализация. Параллельно готовы E00.01.03b–d (генераторы приложений) |
+| Задача | E00.03.02 — `core/config`: `defineModuleConfig`, валидация Zod, ошибки старта (см. `docs/epics/E00.03-config-module.md`) |
+| Ветка | `autopilot/E00.03.02` (создать от `main`) |
+| Подшаги | не спланированы |
+| Следующее действие | Спланировать подшаги: токен `defineModuleConfig(name, schema)` (zod 4.6.5 точной версией в `packages/core/config/package.json`), `loadModuleConfig(token)` поверх `ConfigLoader` — читает только `tree.modules.<name>`, тест «модуль не читает чужой раздел», ошибки старта с именем модуля, ключом и ожидаемым типом (`ConfigError`). Приёмка `nx test core-config --testPathPattern=define`. Параллельно готовы E00.01.03b–d (генераторы приложений) |
 
 ## Разбиение задач (`progress split`)
 
@@ -48,3 +48,4 @@ E00.01.03 (вес 5) разбита по протоколу (размер бол
 | E00.02.05 | done | `1d2b1f0` | Приёмка: `--testPathPattern=hooks` — 5 тестов, код 0. `.githooks/` (pre-commit, commit-msg, pre-push), `core.hooksPath` и генерация конфигов на `postinstall` (`nx run tooling-lint:postinstall`), `eslint.config.mjs` больше не в git |
 | E00.02.06 | done | `978d494` | Приёмка: `--testPathPattern=commit-msg` — 11 тестов, код 0. Валидатор: формат, пара иконка-тип, трейлеры Task/Substep, один проект Nx по staged-файлам; коммиты раздела прошли через него |
 | E00.02.07 | done | `b83d0cb` | Приёмка: `nx e2e tooling-lint-e2e` — 23 теста, код 0: фикстура на каждое правило §3, чистые образцы, `--fix`, коды возврата |
+| E00.03.01 | done | `6eba361` | Приёмка: `nx test core-config --testPathPattern=loader` — 9 тестов, код 0; всего 43 теста, покрытие 100% строк, 98% веток; `nx affected -t lint typecheck test build --base=main` — код 0. Пакет `core-config` (`packages/core/config`, теги `scope:shared`, `type:core`, `platform:api`): `ConfigLoader`/`loadConfig`, слои default → `<env>` → local → `.env` → `APP__*`, `ConfigError` с источником и путём, деревья заморожены. Допущения A-018..A-021; `config/local.toml` в `.gitignore`. Замечание для `tooling-generators`: `@nx/js:library` переформатирует `nx.json` и дописывает `targetDefaults["@nx/eslint:lint"]` — откачено вручную, стоит защитить `nx.json` как `package.json` (A-013) |
