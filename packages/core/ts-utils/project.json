@@ -1,0 +1,24 @@
+{
+    "name": "core-ts-utils",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "packages/core/ts-utils/src",
+    "projectType": "library",
+    "tags": ["scope:shared", "type:core", "platform:shared"],
+    "metadata": {
+        "description": "Утилитарные типы TypeScript: Any, Nullable, DeepPartial, Brand, Result и другие; без кода времени выполнения",
+        "generator": "@market/tooling:lib"
+    },
+    "targets": {
+        "test": {
+            "executor": "@market/tooling:vitest",
+            "dependsOn": ["build"],
+            "outputs": ["{projectRoot}/test-output"],
+            "options": {},
+            "configurations": {
+                "ci": {
+                    "coverage": true
+                }
+            }
+        }
+    }
+}
