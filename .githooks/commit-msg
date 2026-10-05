@@ -1,0 +1,11 @@
+#!/bin/sh
+# Хуки git воркспейса (E00.02.05). Логика в packages/tooling/lint; скрипт лишь вызывает её.
+# Обход хуков (--no-verify) запрещён конвенциями; CI повторяет те же проверки.
+set -e
+ROOT=$(git rev-parse --show-toplevel)
+cd "$ROOT"
+HOOK_CLI="packages/tooling/lint/dist/cli/hook.js"
+if [ ! -f "$HOOK_CLI" ]; then
+    pnpm nx run tooling-lint:build >/dev/null
+fi
+exec node "$HOOK_CLI" commit-msg "$1"
