@@ -5,6 +5,9 @@
     "references": [
         {
             "path": "./packages/tooling/generators"
+        },
+        {
+            "path": "./packages/tooling/lint"
         }
     ]
 }
