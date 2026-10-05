@@ -1,4 +1,4 @@
-import { readJson, readProjectConfiguration, type Tree } from '@nx/devkit';
+import { readJson, readProjectConfiguration, updateJson, type Tree } from '@nx/devkit';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import type { LibGeneratorSchema } from '../../src/@types';
@@ -51,18 +51,18 @@ describe('генератор lib: структура проекта', () => {
     });
 
     it('регистрирует проект с тремя тегами и маркером генератора', () => {
-        const configuration = readProjectConfiguration(tree, 'ts-utils');
+        const configuration = readProjectConfiguration(tree, 'core-ts-utils');
         expect(configuration.root).toBe(ROOT);
         expect(configuration.projectType).toBe('library');
         expect(configuration.tags).toEqual(['scope:shared', 'type:core', 'platform:shared']);
-        expect(readGeneratedProjectMetadata(tree, 'ts-utils')).toEqual({
-            description: 'Пакет @market/ts-utils',
+        expect(readGeneratedProjectMetadata(tree, 'core-ts-utils')).toEqual({
+            description: 'Пакет @market/core-ts-utils',
             generator: LIB_GENERATOR,
         });
     });
 
     it('ставит цель test на executor воркспейса, понимающий --testPathPattern', () => {
-        const configuration = readProjectConfiguration(tree, 'ts-utils');
+        const configuration = readProjectConfiguration(tree, 'core-ts-utils');
         expect(configuration.targets?.['test']).toEqual({
             executor: '@market/tooling:vitest',
             outputs: ['{projectRoot}/test-output'],
@@ -101,7 +101,8 @@ describe('генератор lib: структура проекта', () => {
 
     it('пишет README с назначением, публичным API и примерами', () => {
         const readme = read(tree, `${ROOT}/README.md`);
-        expect(readme).toContain('# @market/ts-utils');
+        expect(readme).toContain('# @market/core-ts-utils');
+        expect(readme).toContain('`core-ts-utils`');
         expect(readme).toContain('## Назначение');
         expect(readme).toContain('## Публичный API');
         expect(readme).toContain('## Примеры');
@@ -110,7 +111,7 @@ describe('генератор lib: структура проекта', () => {
     });
 
     it('называет пакет по import path и подключает его к TS solution', () => {
-        expect(readJson<{ name: string }>(tree, `${ROOT}/package.json`).name).toBe('@market/ts-utils');
+        expect(readJson<{ name: string }>(tree, `${ROOT}/package.json`).name).toBe('@market/core-ts-utils');
         const references = readJson<{ references: { path: string }[] }>(tree, 'tsconfig.json').references;
         expect(references).toContainEqual({ path: `./${ROOT}` });
     });
@@ -118,6 +119,18 @@ describe('генератор lib: структура проекта', () => {
     it('пишет JSON с отступом в четыре пробела', () => {
         expect(read(tree, `${ROOT}/project.json`)).toMatch(/^\{\n {4}"/);
         expect(read(tree, 'tsconfig.json')).toMatch(/^\{\n {4}"/);
+        expect(read(tree, 'nx.json')).toMatch(/^\{\n {4}"/);
+    });
+
+    it('фиксирует tslib точной версией из корня', async () => {
+        const pinned = createTsSolutionTree();
+        updateJson<{ devDependencies?: Record<string, string> }, { devDependencies?: Record<string, string> }>(
+            pinned,
+            'package.json',
+            (json) => ({ ...json, devDependencies: { ...json.devDependencies, tslib: '2.8.1' } }),
+        );
+        await libGenerator(pinned, BASE_OPTIONS);
+        expect(readJson<{ dependencies: Record<string, string> }>(pinned, `${ROOT}/package.json`).dependencies['tslib']).toBe('2.8.1');
     });
 
     it('не трогает корневые package.json и eslint.config.mjs', () => {
@@ -132,30 +145,31 @@ describe('генератор lib: опции', () => {
     it('выводит каталог из типа и позволяет переопределить его', async () => {
         const tree = createTsSolutionTree();
         await libGenerator(tree, { name: 'tokens', type: 'ui', directory: 'packages/design/tokens', skipFormat: true });
-        expect(readProjectConfiguration(tree, 'tokens').root).toBe('packages/design/tokens');
+        expect(readProjectConfiguration(tree, 'design-tokens').root).toBe('packages/design/tokens');
         expect(tree.exists('packages/design/tokens/src/lib/tokens.ts')).toBe(true);
     });
 
     it('ставит теги из type, platform и scope', async () => {
         const tree = createTsSolutionTree();
         await libGenerator(tree, {
-            name: 'catalog-api',
+            name: 'api',
             type: 'module',
             platform: 'api',
             scope: 'catalog',
             directory: 'modules/catalog/api',
-            importPath: '@market/catalog-api',
             skipFormat: true,
         });
         expect(readProjectConfiguration(tree, 'catalog-api').tags).toEqual(['scope:catalog', 'type:module', 'platform:api']);
         expect(readJson<{ name: string }>(tree, 'modules/catalog/api/package.json').name).toBe('@market/catalog-api');
+        expect(tree.exists('modules/catalog/api/src/lib/api.ts')).toBe(true);
+        expect(tree.exists('modules/catalog/api/src/lib/catalog-api.ts')).toBe(false);
     });
 
     it('использует описание в README и маркере', async () => {
         const tree = createTsSolutionTree();
         await libGenerator(tree, { ...BASE_OPTIONS, description: 'Утилитарные типы TypeScript' });
         expect(tree.read(`${ROOT}/README.md`, 'utf-8')).toContain('Утилитарные типы TypeScript');
-        expect(readGeneratedProjectMetadata(tree, 'ts-utils')?.description).toBe('Утилитарные типы TypeScript');
+        expect(readGeneratedProjectMetadata(tree, 'core-ts-utils')?.description).toBe('Утилитарные типы TypeScript');
     });
 
     it('форматирует файлы по умолчанию и создаёт корневой конфиг ESLint, если его не было', async () => {

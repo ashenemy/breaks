@@ -4,7 +4,7 @@ export default defineConfig({
     root: import.meta.dirname,
     cacheDir: '<%= offsetFromRoot %>node_modules/.vite/<%= directory %>',
     test: {
-        name: '<%= name %>',
+        name: '<%= projectName %>',
         watch: false,
         globals: false,
         environment: '<%= testEnvironment %>',

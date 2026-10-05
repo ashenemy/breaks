@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| Проект Nx | `<%= name %>` |
+| Проект Nx | `<%= projectName %>` |
 | Каталог | `<%= directory %>` |
 | Теги | `<%- tags.join('`, `') %>` |
 | Создан | `<%= generator %>` |
@@ -32,6 +32,6 @@ import { <%= propertyName %>Info } from '<%= importPath %>';
 
 | Команда | Что делает |
 |---|---|
-| `nx lint <%= name %>` | ESLint с правилами воркспейса и границами модулей |
-| `nx test <%= name %>` | Vitest, тесты из `test/`; `--coverage` проверяет порог <%= coverageThreshold %>% строк и веток |
-| `nx build <%= name %>` | Сборка `tsc` в `dist/` |
+| `nx lint <%= projectName %>` | ESLint с правилами воркспейса и границами модулей |
+| `nx test <%= projectName %>` | Vitest, тесты из `test/`; `--coverage` проверяет порог <%= coverageThreshold %>% строк и веток |
+| `nx build <%= projectName %>` | Сборка `tsc` в `dist/` |

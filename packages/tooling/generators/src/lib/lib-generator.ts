@@ -1,4 +1,4 @@
-import { formatFiles, type GeneratorCallback, type Tree } from '@nx/devkit';
+import { formatFiles, joinPathFragments, readJson, updateJson, type GeneratorCallback, type Tree } from '@nx/devkit';
 import { libraryGenerator } from '@nx/js';
 
 import type { LibGeneratorSchema, NormalizedLibOptions } from '../@types';
@@ -10,6 +10,11 @@ import { applyStandardStructure } from './standard-structure';
 import { setVitestTestTarget } from './test-target';
 
 type NxLibraryOptions = Parameters<typeof libraryGenerator>[1];
+
+type PackageJson = {
+    dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+};
 
 /** Корневые файлы, которые официальный генератор переписывает в своём стиле; воркспейс управляет ими сам. */
 const PROTECTED_ROOT_FILES = ['eslint.config.mjs', 'package.json'];
@@ -41,12 +46,17 @@ export class LibGenerator {
         this.__restore(protectedFiles);
 
         applyStandardStructure(this.__tree, this.__options, this.__templatesDir);
-        markGeneratedProject(this.__tree, this.__options.name, {
+        markGeneratedProject(this.__tree, this.__options.projectName, {
             description: this.__options.description,
             generator: LIB_GENERATOR,
         });
-        setVitestTestTarget(this.__tree, this.__options.name);
-        reformatJsonFiles(this.__tree, [...listJsonFiles(this.__tree, this.__options.directory), 'tsconfig.json']);
+        setVitestTestTarget(this.__tree, this.__options.projectName);
+        this.__pinTslib();
+        reformatJsonFiles(this.__tree, [
+            ...listJsonFiles(this.__tree, this.__options.directory),
+            'tsconfig.json',
+            'nx.json',
+        ]);
 
         if (!this.__options.skipFormat) {
             await formatFiles(this.__tree);
@@ -55,14 +65,14 @@ export class LibGenerator {
     }
 
     private __toNxLibraryOptions(): NxLibraryOptions {
-        const { directory, importPath, name, tags } = this.__options;
+        const { directory, importPath, projectName, tags } = this.__options;
         return {
             bundler: 'tsc',
             directory,
             formatter: 'none',
             importPath,
             linter: 'eslint',
-            name,
+            name: projectName,
             skipFormat: true,
             strict: true,
             tags: tags.join(','),
@@ -70,6 +80,19 @@ export class LibGenerator {
             unitTestRunner: 'vitest',
             useProjectJson: true,
         };
+    }
+
+    /** Официальный генератор пишет `tslib` диапазоном; версия берётся точной из корневого package.json (ADR-0002). */
+    private __pinTslib(): void {
+        const rootPackageJson = readJson<PackageJson>(this.__tree, 'package.json');
+        const tslibVersion = rootPackageJson.devDependencies?.['tslib'] ?? rootPackageJson.dependencies?.['tslib'];
+        if (!tslibVersion) {
+            return;
+        }
+        updateJson<PackageJson, PackageJson>(this.__tree, joinPathFragments(this.__options.directory, 'package.json'), (json) => ({
+            ...json,
+            dependencies: { ...json.dependencies, tslib: tslibVersion },
+        }));
     }
 
     private __snapshot(filePaths: readonly string[]): Map<string, Buffer | null> {

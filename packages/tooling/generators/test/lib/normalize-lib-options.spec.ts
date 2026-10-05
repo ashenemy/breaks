@@ -1,17 +1,34 @@
 import { describe, expect, it } from 'vitest';
 
-import { normalizeLibOptions } from '../../src/lib/normalize-lib-options';
+import { deriveProjectName, normalizeLibOptions } from '../../src/lib/normalize-lib-options';
+
+describe('deriveProjectName', () => {
+    it.each([
+        ['packages/core/ts-utils', 'core-ts-utils'],
+        ['packages/tooling/lint', 'tooling-lint'],
+        ['packages/design/tokens', 'design-tokens'],
+        ['packages/ui/ui-web', 'ui-web'],
+        ['packages/ui/ui-contracts', 'ui-contracts'],
+        ['modules/catalog/api', 'catalog-api'],
+        ['modules/i18n/web', 'i18n-web'],
+        ['apps/web-buyer', 'web-buyer'],
+        ['apps/api', 'api'],
+    ])('%s → %s', (directory, expected) => {
+        expect(deriveProjectName(directory)).toBe(expected);
+    });
+});
 
 describe('normalizeLibOptions', () => {
     it('вычисляет имена, каталог, import path и теги по умолчанию', () => {
         expect(normalizeLibOptions({ name: 'js-utils', type: 'core' })).toEqual({
             className: 'JsUtils',
-            description: 'Пакет @market/js-utils',
+            description: 'Пакет @market/core-js-utils',
             directory: 'packages/core/js-utils',
             fileName: 'js-utils',
-            importPath: '@market/js-utils',
+            importPath: '@market/core-js-utils',
             name: 'js-utils',
             platform: 'shared',
+            projectName: 'core-js-utils',
             propertyName: 'jsUtils',
             scope: 'shared',
             skipFormat: false,

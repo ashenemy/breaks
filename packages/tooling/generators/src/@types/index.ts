@@ -32,8 +32,11 @@ export type NormalizedLibOptions = {
     directory: string;
     fileName: string;
     importPath: string;
+    /** Имя каталога и файлов (`ts-utils`). */
     name: string;
     platform: Platform;
+    /** Имя проекта Nx по соглашению эпиков (`core-ts-utils`, `catalog-api`). */
+    projectName: string;
     propertyName: string;
     scope: string;
     skipFormat: boolean;

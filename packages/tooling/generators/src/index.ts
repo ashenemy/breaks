@@ -25,7 +25,7 @@ export {
 } from './lib/constants';
 export { LibGenerator } from './lib/lib-generator';
 export { assertKebabCase, buildTags } from './lib/naming';
-export { normalizeLibOptions } from './lib/normalize-lib-options';
+export { deriveProjectName, normalizeLibOptions } from './lib/normalize-lib-options';
 export { markGeneratedProject, readGeneratedProjectMetadata } from './lib/project-marker';
 export { buildVitestTestTarget, setVitestTestTarget } from './lib/test-target';
 export { buildVitestArgs } from './lib/vitest-args';
