@@ -8,15 +8,9 @@
         "module": "esnext",
         "moduleResolution": "bundler",
         "noEmit": true,
-        "types": [
-            "node"
-        ],
+        "types": ["node"],
         "allowJs": true,
         "checkJs": false
     },
-    "include": [
-        "**/*.ts",
-        "**/*.mts",
-        "**/*.mjs"
-    ]
+    "include": ["**/*.ts", "**/*.mts", "**/*.mjs"]
 }

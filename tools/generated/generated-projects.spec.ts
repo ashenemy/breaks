@@ -14,13 +14,19 @@ function node(name: string, generator?: unknown): GraphNode {
 }
 
 describe('isGeneratorMarker', () => {
-    it.each(['@market/tooling:lib', '@nx/plugin:plugin', '@nx/js:library', 'local-plugin:app'])('принимает %s', (value) => {
-        expect(isGeneratorMarker(value)).toBe(true);
-    });
+    it.each(['@market/tooling:lib', '@nx/plugin:plugin', '@nx/js:library', 'local-plugin:app'])(
+        'принимает %s',
+        (value) => {
+            expect(isGeneratorMarker(value)).toBe(true);
+        },
+    );
 
-    it.each(['', 'lib', '@market/tooling', ':lib', 42, null, undefined, { generator: 'x' }])('отклоняет %j', (value) => {
-        expect(isGeneratorMarker(value)).toBe(false);
-    });
+    it.each(['', 'lib', '@market/tooling', ':lib', 42, null, undefined, { generator: 'x' }])(
+        'отклоняет %j',
+        (value) => {
+            expect(isGeneratorMarker(value)).toBe(false);
+        },
+    );
 });
 
 describe('findProjectsWithoutGenerator', () => {
@@ -58,11 +64,15 @@ describe('formatReport', () => {
 
 describe('pnpm check:generated на реальном воркспейсе', () => {
     it('все проекты воркспейса помечены генератором', () => {
-        const result = spawnSync(process.execPath, [join(WORKSPACE_ROOT, 'tools', 'generated', 'check-generated-projects.mjs')], {
-            cwd: WORKSPACE_ROOT,
-            encoding: 'utf8',
-            env: { ...process.env, NX_DAEMON: 'false' },
-        });
+        const result = spawnSync(
+            process.execPath,
+            [join(WORKSPACE_ROOT, 'tools', 'generated', 'check-generated-projects.mjs')],
+            {
+                cwd: WORKSPACE_ROOT,
+                encoding: 'utf8',
+                env: { ...process.env, NX_DAEMON: 'false' },
+            },
+        );
         expect(result.stderr).toBe('');
         expect(result.stdout).toContain('созданы генераторами');
         expect(result.status).toBe(0);

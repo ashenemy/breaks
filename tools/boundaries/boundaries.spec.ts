@@ -105,7 +105,12 @@ const PROJECTS: FixtureProject[] = [
         root: 'packages/contracts/catalog',
         tags: ['scope:catalog', 'type:contracts', 'platform:shared'],
     },
-    { name: 'ui-web', projectType: 'library', root: 'packages/ui/ui-web', tags: ['scope:shared', 'type:ui', 'platform:web'] },
+    {
+        name: 'ui-web',
+        projectType: 'library',
+        root: 'packages/ui/ui-web',
+        tags: ['scope:shared', 'type:ui', 'platform:web'],
+    },
     {
         name: 'infra-mongo',
         projectType: 'library',
@@ -157,7 +162,8 @@ const VIOLATIONS: BoundaryCase[] = [
         title: 'platform:shared → platform:api',
         source: 'contracts-catalog',
         target: 'infra-mongo',
-        expectedMessage: 'A project tagged with "platform:shared" can only depend on libs tagged with "platform:shared"',
+        expectedMessage:
+            'A project tagged with "platform:shared" can only depend on libs tagged with "platform:shared"',
     },
     {
         id: 'app-imports-tooling',
@@ -217,20 +223,50 @@ const VIOLATIONS: BoundaryCase[] = [
 
 const ALLOWED: BoundaryCase[] = [
     { id: 'web-module-imports-ui', title: 'module/web → ui/web', source: 'catalog-web', target: 'ui-web' },
-    { id: 'web-module-imports-contracts', title: 'module/web → contracts', source: 'catalog-web', target: 'contracts-catalog' },
+    {
+        id: 'web-module-imports-contracts',
+        title: 'module/web → contracts',
+        source: 'catalog-web',
+        target: 'contracts-catalog',
+    },
     { id: 'web-module-imports-core', title: 'module/web → core', source: 'catalog-web', target: 'ts-utils' },
-    { id: 'native-module-imports-contracts', title: 'module/native → contracts', source: 'catalog-native', target: 'contracts-catalog' },
-    { id: 'app-imports-module', title: 'app/api (scope:shared) → module/catalog', source: 'api', target: 'catalog-api' },
+    {
+        id: 'native-module-imports-contracts',
+        title: 'module/native → contracts',
+        source: 'catalog-native',
+        target: 'contracts-catalog',
+    },
+    {
+        id: 'app-imports-module',
+        title: 'app/api (scope:shared) → module/catalog',
+        source: 'api',
+        target: 'catalog-api',
+    },
     { id: 'app-imports-infra', title: 'app/api → infra/api', source: 'api', target: 'infra-mongo' },
     { id: 'app-imports-core', title: 'app/api → core', source: 'api', target: 'ts-utils' },
-    { id: 'module-imports-other-domain', title: 'module/orders → module/catalog (между доменами)', source: 'orders-api', target: 'catalog-api' },
+    {
+        id: 'module-imports-other-domain',
+        title: 'module/orders → module/catalog (между доменами)',
+        source: 'orders-api',
+        target: 'catalog-api',
+    },
     { id: 'module-imports-infra', title: 'module/api → infra/api', source: 'catalog-api', target: 'infra-mongo' },
-    { id: 'module-imports-contracts', title: 'module/api → contracts', source: 'catalog-api', target: 'contracts-catalog' },
+    {
+        id: 'module-imports-contracts',
+        title: 'module/api → contracts',
+        source: 'catalog-api',
+        target: 'contracts-catalog',
+    },
     { id: 'infra-imports-core', title: 'infra → core', source: 'infra-mongo', target: 'js-utils' },
     { id: 'contracts-imports-core', title: 'contracts → core', source: 'contracts-catalog', target: 'js-utils' },
     { id: 'ui-imports-core', title: 'ui → core', source: 'ui-web', target: 'js-utils' },
     { id: 'tooling-imports-core', title: 'tooling → core', source: 'tooling-progress', target: 'ts-utils' },
-    { id: 'tooling-imports-module', title: 'tooling (scope:shared) → module/catalog', source: 'tooling-progress', target: 'catalog-api' },
+    {
+        id: 'tooling-imports-module',
+        title: 'tooling (scope:shared) → module/catalog',
+        source: 'tooling-progress',
+        target: 'catalog-api',
+    },
 ];
 
 const CASES: BoundaryCase[] = [...VIOLATIONS, ...ALLOWED];
@@ -305,7 +341,9 @@ function runNode(root: string, script: string, args: string[], allowedStatuses: 
         throw result.error;
     }
     if (result.status === null || !allowedStatuses.includes(result.status)) {
-        throw new Error(`${script} ${args.join(' ')} завершился с кодом ${result.status}\n${result.stdout}\n${result.stderr}`);
+        throw new Error(
+            `${script} ${args.join(' ')} завершился с кодом ${result.status}\n${result.stdout}\n${result.stderr}`,
+        );
     }
     return { status: result.status, stderr: result.stderr, stdout: result.stdout };
 }
@@ -325,7 +363,12 @@ function warmProjectGraph(root: string): string[] {
 function lintCases(root: string): Map<string, LintMessage[]> {
     const files = CASES.map(caseFilePath);
     // Код 1 означает найденные ошибки линтинга, то есть ожидаемый результат для нарушений.
-    const { stdout, stderr } = runNode(root, 'eslint/bin/eslint.js', ['--format', 'json', '--no-warn-ignored', ...files], [0, 1]);
+    const { stdout, stderr } = runNode(
+        root,
+        'eslint/bin/eslint.js',
+        ['--format', 'json', '--no-warn-ignored', ...files],
+        [0, 1],
+    );
 
     let results: unknown;
     try {
