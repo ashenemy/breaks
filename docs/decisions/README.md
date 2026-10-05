@@ -20,3 +20,4 @@
 | 0011 | Формат scope коммитов (`rootScope/moduleScope`) | proposed |
 | 0012 | Решение go или no-go по NativeScript по итогам спайка (E00.12.05) | open |
 | 0013 | E2E мобильного приложения: Maestro | proposed |
+| 0014 | Теги проектов (`scope`, `type`, `platform`) и матрица границ зависимостей | accepted ([ADR-0014](ADR-0014-project-tags-and-boundaries.md)) |

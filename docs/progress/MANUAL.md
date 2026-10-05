@@ -8,8 +8,8 @@
 
 | Поле | Значение |
 |---|---|
-| Задача | E00.01.02 — Теги проектов и правила границ (scope, type, platform) через enforce-module-boundaries |
-| Ветка | `autopilot/E00.01.02` |
+| Задача | E00.01.03 — Кастомные генераторы-обёртки над официальными плагинами Nx (lib, nest-app, angular-app, nativescript-app, module) |
+| Ветка | `autopilot/E00.01.03` |
 | Подшаги | не спланированы |
 | Следующее действие | Спланировать подшаги (3–8), создать ветку |
 
@@ -18,6 +18,6 @@
 | Задача | Статус | Коммит | Примечание |
 |---|---|---|---|
 | E00.01.01 | done | `ecd8518` | Приёмка: `nx graph --file=tmp/graph.json`, `nx run-many -t build --all --skip-nx-cache` — код 0. Допущения A-008, A-009; ADR-0002 |
-| E00.01.02 | todo | — | — |
+| E00.01.02 | done | `2be266b` | Приёмка: `pnpm test:boundaries` — 28 тестов, код 0; `nx run-many -t lint test build` — код 0. ADR-0014, допущение A-010 |
 | E00.01.03 | todo | — | — |
 | E00.01.04 | todo | — | — |
