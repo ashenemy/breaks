@@ -8,10 +8,10 @@
 
 | Поле | Значение |
 |---|---|
-| Задача | E00.02.03 — Генератор `eslint.config.mjs` (naming, members, types, angular, i18n, boundaries) |
-| Ветка | `autopilot/E00.02.03` |
+| Задача | E00.02.04 — Раннер `lint:run` (режимы, кэш, отчёт, коды возврата) |
+| Ветка | `autopilot/E00.02.04` |
 | Подшаги | не спланированы |
-| Следующее действие | Спланировать подшаги (3–8), создать ветку; перенести `tools/boundaries/dep-constraints.mjs` в генерацию из `[boundaries]` |
+| Следующее действие | Спланировать подшаги, создать ветку |
 
 ## Разбиение задач (`progress split`)
 
@@ -43,7 +43,7 @@ E00.01.03 (вес 5) разбита по протоколу (размер бол
 | E00.01.04 | done | `e6888e2` | Приёмка: `nx affected -t lint test build --base=HEAD~1` — код 0; `pnpm check:generated`, `pnpm test:tools` (45 тестов) — код 0. README корня: раздел «Работа с репозиторием» |
 | E00.02.01 | done | `433eea0` | Приёмка: `nx test tooling-lint --testPathPattern=schema` — код 0 (13 тестов всего, покрытие 100%/90%+). Имена проектов по соглашению эпиков (`tooling-lint`, `core-ts-utils`) заложены в генератор (`53dbd02`) |
 | E00.02.02 | done | `36863fc` | Приёмка: `nx test tooling-lint --testPathPattern=biome-generator` — 10 тестов, код 0 (в том числе проверка конфига установленным Biome 2.5.15). Хеш-кэш `.cache/lint/hash` |
-| E00.02.03 | todo | — | — |
+| E00.02.03 | done | `04c9a85` | Приёмка: `nx test tooling-lint --testPathPattern=eslint-generator` — 19 тестов, код 0 (проверка настоящим ESLint 10). Корневой `eslint.config.mjs` генерируется из TOML, `[boundaries]` заменил `tools/boundaries/dep-constraints.mjs` |
 | E00.02.04 | todo | — | — |
 | E00.02.05 | todo | — | — |
 | E00.02.06 | todo | — | — |
