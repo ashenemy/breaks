@@ -1,0 +1,28 @@
+{
+    "name": "@market/source",
+    "version": "0.0.0",
+    "private": true,
+    "license": "UNLICENSED",
+    "description": "Мультивендор-маркетплейс строительных товаров (Армения): монорепо Nx",
+    "packageManager": "pnpm@12.9.1",
+    "engines": {
+        "node": ">=24.21.0 <25",
+        "pnpm": ">=12.9.1 <13"
+    },
+    "scripts": {
+        "nx": "nx",
+        "graph": "nx graph --file=tmp/graph.json",
+        "build": "nx run-many -t build --all",
+        "test": "nx run-many -t test --all",
+        "lint": "nx run-many -t lint --all",
+        "typecheck": "nx run-many -t typecheck --all"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@nx/js": "23.2.1",
+        "@swc/helpers": "0.5.23",
+        "nx": "23.2.1",
+        "tslib": "2.8.1",
+        "typescript": "6.0.3"
+    }
+}

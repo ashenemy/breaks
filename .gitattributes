@@ -1,0 +1,27 @@
+# Единые окончания строк LF в репозитории и в рабочей копии независимо от core.autocrlf
+# (docs/02-code-conventions.md, раздел 1).
+* text=auto eol=lf
+
+# Бинарные файлы не нормализуются и не показываются в diff.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.mp4 binary
+*.webm binary
+*.mp3 binary
+*.keystore binary
+*.jks binary
+*.p12 binary
+*.p8 binary

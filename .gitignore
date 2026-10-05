@@ -1,0 +1,64 @@
+# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# compiled output
+dist
+tmp
+out-tsc
+
+# dependencies
+node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Nx
+.nx/cache
+.nx/workspace-data
+.nx/migrate-runs
+
+# AI agents
+.claude/worktrees
+.claude/settings.local.json
+
+# Секреты: только .env и AWS Secrets Manager (AGENTS.md). Шаблон .env.example коммитится.
+.env
+.env.*
+!.env.example
+
+# Инструмент прогресса: локальный контекст (docs/03-autopilot-protocol.md, 4.1)
+.progress/
+
+# tooling/lint: конфиги генерируются из TOML на лету (E00.02)
+/biome.json
+/eslint.config.mjs
+/.cache/
+
+# Покрытие тестов
+coverage/
