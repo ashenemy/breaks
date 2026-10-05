@@ -24,7 +24,9 @@
         "check:generated": "node tools/generated/check-generated-projects.mjs",
         "test:boundaries": "vitest run --root tools boundaries",
         "test:tools": "vitest run --root tools",
-        "ci": "pnpm check:generated && pnpm test:tools && nx affected -t lint typecheck test build"
+        "ci": "pnpm check:generated && pnpm test:tools && nx run tooling-lint:run --ci && nx affected -t typecheck test build",
+        "lint:run": "nx run tooling-lint:run",
+        "lint:fix": "nx run tooling-lint:run --fix"
     },
     "dependencies": {},
     "devDependencies": {
