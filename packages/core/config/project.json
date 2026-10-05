@@ -1,0 +1,23 @@
+{
+    "name": "core-config",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "packages/core/config/src",
+    "projectType": "library",
+    "tags": ["scope:shared", "type:core", "platform:api"],
+    "metadata": {
+        "description": "Загрузчик конфигурации: слои TOML (default, окружение, local), .env и переопределение переменными окружения",
+        "generator": "@market/tooling:lib"
+    },
+    "targets": {
+        "test": {
+            "executor": "@market/tooling:vitest",
+            "outputs": ["{projectRoot}/test-output"],
+            "options": {},
+            "configurations": {
+                "ci": {
+                    "coverage": true
+                }
+            }
+        }
+    }
+}
