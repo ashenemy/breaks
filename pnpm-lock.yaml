@@ -238,6 +238,9 @@ importers:
       tslib:
         specifier: 2.8.1
         version: 2.8.1
+      zod:
+        specifier: 4.6.5
+        version: 4.6.5
 
   packages/tooling/generators:
     dependencies:
