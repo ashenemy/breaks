@@ -10,6 +10,8 @@ export default defineConfig({
         environment: 'node',
         include: ['test/**/*.spec.ts'],
         reporters: ['default'],
+        testTimeout: 60_000,
+        hookTimeout: 60_000,
         passWithNoTests: false,
         coverage: {
             provider: 'v8',

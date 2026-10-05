@@ -91,7 +91,7 @@ describe('RULES_SCHEMA: обязательные разделы и провер�
     it('проверяет границы чисел и перечисления', () => {
         expect(RULES_SCHEMA.safeParse({ ...MINIMAL, format: { indent: 1 } }).success).toBe(false);
         expect(RULES_SCHEMA.safeParse({ ...MINIMAL, format: { 'line-ending': 'crlf' } }).success).toBe(false);
-        expect(RULES_SCHEMA.safeParse({ ...MINIMAL, commits: { types: { Feat: '✨' } } }).success).toBe(false);
+        expect(RULES_SCHEMA.safeParse({ ...MINIMAL, commits: { types: { 'feat!': '✨' } } }).success).toBe(false);
         expect(RULES_SCHEMA.safeParse({ ...MINIMAL, commits: { types: {} } }).success).toBe(false);
         expect(RULES_SCHEMA.safeParse({ ...MINIMAL, i18n: { locales: ['hye'] } }).success).toBe(false);
         expect(RULES_SCHEMA.safeParse({ ...MINIMAL, platforms: { ios: {} } }).success).toBe(false);
