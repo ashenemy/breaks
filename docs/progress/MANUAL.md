@@ -8,10 +8,10 @@
 
 | Поле | Значение |
 |---|---|
-| Задача | E00.03.02 — `core/config`: `defineModuleConfig`, валидация Zod, ошибки старта (см. `docs/epics/E00.03-config-module.md`) |
-| Ветка | `autopilot/E00.03.02` |
-| Подшаги | 1 ⏳ `zod` 4.6.5 в пакете; `ModuleConfigToken`/`defineModuleConfig(name, schema)`: имя в camelCase (A-018), путь `modules.<name>`, `envVariable(...keys)` (обратное отображение `camelCase` → `UPPER_SNAKE`); 2 `ModuleConfigReader(loadedConfig).read(token)`: только `tree.modules.<name>` (нет раздела — `{}`), `safeParse` с локалью `ru` без глобального `z.config`, `ConfigValidationError extends ConfigError` (модуль, ключ, ожидаемый тип, подсказка с именем переменной для отсутствующего ключа), кэш по токену, заморозка; `loadModuleConfig(token, options?)`; тесты `test/lib/define-module-config.spec.ts`, README, журнал |
-| Следующее действие | Подшаг 1: добавить `zod`, написать `src/lib/define-module-config.ts` и тесты токена (красные), реализовать. Параллельно готовы E00.01.03b–d (генераторы приложений) |
+| Задача | E00.03.03 — `core/config`: запрет секретов в TOML и маскирование в логах (см. `docs/epics/E00.03-config-module.md`) |
+| Ветка | `autopilot/E00.03.03` |
+| Подшаги | 1 ⏳ `SecretPolicy` (`isSecretKey`: последнее слово ключа из `secret`, `password`, `token`, `key`, в т. ч. множественное число; `findSecretPaths`, `mask`), `ConfigSecretError extends ConfigError`; 2 проверка каждого слоя TOML в `ConfigLoader.load()` с указанием файла, пути и переменной окружения (`keyToEnvSegment`), значения в сообщениях не раскрываются; `maskSecrets` для логов и ответов API; тесты `test/lib/secrets.spec.ts`, README, допущение, журнал |
+| Следующее действие | Подшаг 1: `src/lib/secrets.ts` и тесты (красные), реализовать. Приёмка `nx test core-config --testPathPattern=secrets`. E00.03.04 (Nest) ждёт фиксации версии NestJS в ADR-0002 (E00.01.03b). Параллельно готовы E00.01.03b–d |
 
 ## Разбиение задач (`progress split`)
 
