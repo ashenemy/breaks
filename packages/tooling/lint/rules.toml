@@ -1,0 +1,175 @@
+# Правила кода воркспейса: единственный ручной источник (docs/02-code-conventions.md).
+# Из этого файла генерируются biome.json и eslint.config.mjs (E00.02). Схема: src/lib/rules-schema.ts.
+
+[format]
+indent = 4
+line-ending = "lf"
+line-width = 120
+quotes = "single"
+trailing-commas = "all"
+
+[naming]
+export-const = "UPPER_CASE"
+static-readonly = "UPPER_CASE"
+types = "PascalCase"
+exported-functions = "function"
+
+[naming.public]
+format = "camelCase"
+leading-underscore = "forbid"
+
+[naming.protected]
+format = "camelCase"
+leading-underscore = "require"
+
+[naming.private]
+format = "camelCase"
+leading-underscore = "requireDouble"
+
+[members]
+explicit-accessibility = true
+explicit-return-types = true
+typedef = true
+order = [
+    "public-static-field",
+    "protected-static-field",
+    "private-static-field",
+    "public-instance-field",
+    "protected-instance-field",
+    "private-instance-field",
+    "public-static-method",
+    "protected-static-method",
+    "private-static-method",
+    "constructor",
+    "public-instance-method",
+    "protected-instance-method",
+    "private-instance-method",
+]
+
+[imports]
+type-imports = true
+type-exports = true
+sort = true
+groups = ["builtin", "external", "scope", "relative"]
+scope = "@market"
+no-default-export = true
+no-export-all = true
+export-exceptions = ["**/eslint.config.*", "**/vitest.config.*", "**/vite.config.*"]
+
+[types]
+no-explicit-any = "error"
+consistent-type-definitions = "type"
+any-alias = "Any"
+any-alias-package = "@market/core-ts-utils"
+
+[angular]
+material-allowed-in = ["packages/ui/ui-web/**"]
+native-elements = ["a", "button", "input", "select", "textarea"]
+native-elements-allowed-in = ["packages/ui/ui-web/**"]
+
+[i18n]
+forbid-hardcoded-text = true
+locales = ["hy", "ru", "en"]
+template-globs = ["**/*.html"]
+native-globs = ["packages/ui/ui-native/**/*.ts"]
+
+# Границы (ADR-0014): платформа, роль, домен. Порядок важен: сообщается первое нарушение.
+[boundaries]
+enforce-buildable = true
+allow = ["^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$"]
+
+[[boundaries.constraints]]
+source = "platform:api"
+only = ["platform:api", "platform:shared"]
+
+[[boundaries.constraints]]
+source = "platform:web"
+only = ["platform:web", "platform:shared"]
+
+[[boundaries.constraints]]
+source = "platform:native"
+only = ["platform:native", "platform:shared"]
+
+[[boundaries.constraints]]
+source = "platform:shared"
+only = ["platform:shared"]
+
+[[boundaries.constraints]]
+source = "type:app"
+only = ["type:module", "type:ui", "type:infra", "type:contracts", "type:core"]
+
+[[boundaries.constraints]]
+source = "type:module"
+only = ["type:module", "type:ui", "type:infra", "type:contracts", "type:core"]
+
+[[boundaries.constraints]]
+source = "type:ui"
+only = ["type:ui", "type:contracts", "type:core"]
+
+[[boundaries.constraints]]
+source = "type:infra"
+only = ["type:infra", "type:contracts", "type:core"]
+
+[[boundaries.constraints]]
+source = "type:contracts"
+only = ["type:contracts", "type:core"]
+
+[[boundaries.constraints]]
+source = "type:core"
+only = ["type:core"]
+
+[[boundaries.constraints]]
+source = "type:tooling"
+only = ["type:tooling", "type:module", "type:ui", "type:infra", "type:contracts", "type:core"]
+
+[[boundaries.constraints]]
+all-source = ["scope:shared", "type:core"]
+only = ["scope:shared"]
+
+[[boundaries.constraints]]
+all-source = ["scope:shared", "type:contracts"]
+only = ["scope:shared"]
+
+[[boundaries.constraints]]
+all-source = ["scope:shared", "type:ui"]
+only = ["scope:shared"]
+
+[[boundaries.constraints]]
+all-source = ["scope:shared", "type:infra"]
+only = ["scope:shared"]
+
+[[boundaries.constraints]]
+all-source = ["scope:shared", "type:module"]
+only = ["scope:shared"]
+
+[[boundaries.constraints]]
+source = "scope:*"
+only = ["scope:*"]
+
+[commits]
+root-scopes = ["apps", "packages", "modules", "root"]
+subject-max = 72
+task-trailer = "Task"
+substep-trailer = "Substep"
+
+[commits.types]
+feat = "✨"
+fix = "🐛"
+refactor = "♻️"
+test = "🧪"
+docs = "📝"
+chore = "🔧"
+perf = "⚡"
+style = "🎨"
+security = "🔒"
+build = "🏗️"
+db = "🗃️"
+
+# Пересекающиеся правила включены ровно в одном инструменте.
+[overlap]
+biome = ["noExplicitAny", "useImportType", "useExportType", "noUnusedVariables", "organizeImports"]
+eslint = ["naming-convention", "member-ordering", "consistent-type-definitions", "explicit-member-accessibility", "explicit-function-return-type", "typedef"]
+
+# Переопределения по платформам: веб допускает идиоматичный Angular (signals, standalone).
+[platforms.web.members]
+explicit-return-types = false
