@@ -25,6 +25,11 @@ export function envSegmentToKey(segment: string): string {
     return head + rest.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join('');
 }
 
+/** Обратное отображение для подсказок: `pageSize` → `PAGE_SIZE`, `s3Bucket` → `S3_BUCKET`, `catalog` → `CATALOG`. */
+export function keyToEnvSegment(key: string): string {
+    return key.replace(/([A-Z])/g, '_$1').toUpperCase();
+}
+
 /**
  * Приведение строки окружения к типу значения конфига. Тип задаёт текущее значение из TOML (строка остаётся
  * строкой, число и логическое значение разбираются строго). Без текущего значения строка читается как литерал

@@ -39,6 +39,8 @@ export class ConfigLoader {
 
     private readonly __environment: AppEnvironment | undefined;
 
+    private readonly __envPrefix: string;
+
     private readonly __overrides: EnvOverrides;
 
     constructor(options: ConfigLoaderOptions = {}) {
@@ -47,7 +49,8 @@ export class ConfigLoader {
         this.__dotenvPath = options.dotenvPath === undefined ? join(cwd, DOTENV_FILE) : options.dotenvPath;
         this.__env = options.env ?? process.env;
         this.__environment = options.environment;
-        this.__overrides = new EnvOverrides(options.envPrefix ?? DEFAULT_ENV_PREFIX);
+        this.__envPrefix = options.envPrefix ?? DEFAULT_ENV_PREFIX;
+        this.__overrides = new EnvOverrides(this.__envPrefix);
     }
 
     public get configDir(): string {
@@ -96,7 +99,13 @@ export class ConfigLoader {
             variables: overrides.variables,
         });
 
-        return { environment, fileTree: deepFreeze(fileTree), layers, tree: deepFreeze(overrides.tree) };
+        return {
+            environment,
+            envPrefix: this.__envPrefix,
+            fileTree: deepFreeze(fileTree),
+            layers,
+            tree: deepFreeze(overrides.tree),
+        };
     }
 
     private __fileLayers(environment: AppEnvironment): TomlLayer[] {

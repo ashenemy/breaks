@@ -3,6 +3,17 @@
  * Публичные типы реэкспортируются через src/index.ts в форме `export type`.
  */
 
+import type { output, ZodType } from 'zod';
+
+import type { ModuleConfigToken } from '../lib/define-module-config.js';
+
+/** Значения раздела модуля, выведенные из Zod-схемы токена: `ModuleConfig<typeof CATALOG_CONFIG>`. */
+export type ModuleConfig<TToken extends ModuleConfigToken> =
+    TToken extends ModuleConfigToken<infer TSchema> ? Readonly<output<TSchema>> : never;
+
+/** Схема раздела модуля: любой тип Zod; для защиты от опечаток в ключах рекомендуется `z.strictObject`. */
+export type ModuleSchema = ZodType;
+
 /** Окружение приложения: имя файла слоя `config/<env>.toml` (E00.03, требование 1). */
 export type AppEnvironment = 'dev' | 'prod' | 'staging' | 'test';
 
@@ -75,6 +86,8 @@ export type ConfigLoaderOptions = {
 /** Загруженная конфигурация: деревья заморожены, значения в рантайме неизменяемы (E00.03, требование 7). */
 export type LoadedConfig = {
     environment: AppEnvironment;
+    /** Префикс переменных переопределения без разделителя (`APP`): нужен для подсказок в ошибках. */
+    envPrefix: string;
     /** Дерево после слияния файлов TOML до переопределений окружением: нужно для запрета секретов в TOML. */
     fileTree: ConfigTree;
     /** Слои в порядке слияния с диагностикой присутствия. */
