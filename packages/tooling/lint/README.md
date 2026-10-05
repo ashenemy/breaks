@@ -29,9 +29,14 @@
 - `RulesLoader` — класс загрузчика; `RulesConfigError` — ошибка с `issues: { path, message }[]`.
 - `RULES_SCHEMA`, `overrideOf(section)` — схема и построение переопределений по платформе.
 - `DEFAULT_RULES_PATH` — путь к `rules.toml`.
+- `BiomeGenerator({ workspaceRoot, rulesPath?, force? }).generate()` — пишет `biome.json` в корень воркспейса из
+  `[format]`, `[overlap].biome` и `[imports].sort`; запись пропускается, если хеш правил и версии Biome не изменился.
+  `buildBiomeConfig(rules, biomeVersion)`, `detectBiomeVersion(workspaceRoot)`, `BIOME_CONFIG_FILE`.
+- `computeConfigHash(rulesToml, toolVersions)`, `HashCache(workspaceRoot)` — хеши конфигов в `.cache/lint/hash`
+  (атомарная запись, по инструментам).
 - Типы: `RulesConfig`, `RawRules`, `FormatRules`, `NamingRules`, `MembersRules`, `ImportsRules`, `TypesRules`,
   `AngularRules`, `I18nRules`, `BoundariesRules`, `BoundaryConstraint`, `CommitsRules`, `OverlapRules`,
-  `PlatformOverrides`, `RulesIssue`, `LoadedRules`.
+  `PlatformOverrides`, `RulesIssue`, `LoadedRules`, `BiomeConfig`, `BiomeGeneratorOptions`, `GenerateResult`, `HashRecord`.
 
 ## Примеры
 
@@ -53,7 +58,7 @@ try {
 
 | Команда | Что делает |
 |---|---|
-| `nx test tooling-lint` | Тесты; `--testPathPattern=schema` — только схема (приёмка E00.02.01) |
+| `nx test tooling-lint` | Тесты; `--testPathPattern=schema` — только схема (приёмка E00.02.01), `--testPathPattern=biome-generator` — генератор Biome (E00.02.02) |
 | `nx test tooling-lint -c ci` | Тесты с покрытием и порогом 90% |
 | `nx lint tooling-lint` | ESLint |
 | `nx build tooling-lint` | Сборка `tsc` в `dist/` |
