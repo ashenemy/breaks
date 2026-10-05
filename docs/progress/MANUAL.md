@@ -10,8 +10,8 @@
 |---|---|
 | Задача | E00.03.01 — `core/config`: загрузчик TOML + .env (см. `docs/epics/E00.03-config-module.md`) |
 | Ветка | `autopilot/E00.03.01` |
-| Подшаги | не спланированы |
-| Следующее действие | `nx g @market/tooling:lib config --type=core`, спланировать подшаги. Параллельно готовы E00.01.03b–d (генераторы приложений) |
+| Подшаги | 1 ✅ каркас `core-config` (`nx g @market/tooling:lib config --type=core --platform=api`, `04c75ab`) и регистрация в корне (`bd644ac`); 2 ⏳ слои TOML: `TomlLayerReader`, `deepMerge`/`deepFreeze`, порядок default → `<env>` → local, `resolveEnvironment` (`APP_ENV`, затем `NODE_ENV`); 3 переопределение окружением: `APP__A__B=value` → `a.b`, `UPPER_SNAKE` → `camelCase`, приведение типа по текущему значению или как литерал TOML, чтение `.env` через `node:util.parseEnv` (process.env сильнее `.env`); 4 класс `ConfigLoader`/`loadConfig` с диагностикой слоёв, README, допущения, приёмка `nx test core-config --testPathPattern=loader` |
+| Следующее действие | Подшаг 2: тесты `test/lib/merge.spec.ts`, `toml-layer.spec.ts`, `environment.spec.ts` (красные), затем реализация. Параллельно готовы E00.01.03b–d (генераторы приложений) |
 
 ## Разбиение задач (`progress split`)
 
