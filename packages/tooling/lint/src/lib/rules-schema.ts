@@ -36,6 +36,8 @@ const FORMAT = z.strictObject({
     indent: z.number().int().min(2).max(8).default(4),
     'line-ending': z.enum(['lf']).default('lf'),
     'line-width': z.number().int().min(80).max(200).default(120),
+    /** Декораторы параметров конструктора (`@Inject()` в Nest и Angular): Biome разбирает их только по явному флагу. */
+    'parameter-decorators': z.boolean().default(true),
     quotes: z.enum(['single', 'double']).default('single'),
     'trailing-commas': z.enum(['all', 'es5', 'none']).default('all'),
 });

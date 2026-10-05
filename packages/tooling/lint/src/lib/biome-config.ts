@@ -12,7 +12,10 @@ export type BiomeConfig = {
         lineEnding: 'lf';
         lineWidth: number;
     };
-    javascript: { formatter: { quoteStyle: 'single' | 'double'; trailingCommas: 'all' | 'es5' | 'none' } };
+    javascript: {
+        formatter: { quoteStyle: 'single' | 'double'; trailingCommas: 'all' | 'es5' | 'none' };
+        parser: { unsafeParameterDecoratorsEnabled: boolean };
+    };
     json: { formatter: { indentWidth: number } };
     linter: { enabled: true; rules: Record<string, Record<string, 'error' | 'warn' | 'off'>> };
     vcs: { clientKind: 'git'; enabled: false; useIgnoreFile: false };
@@ -74,7 +77,11 @@ export function buildBiomeConfig(rules: RulesConfig, biomeVersion: string): Biom
             lineEnding: format['line-ending'],
             lineWidth: format['line-width'],
         },
-        javascript: { formatter: { quoteStyle: format.quotes, trailingCommas: format['trailing-commas'] } },
+        javascript: {
+            formatter: { quoteStyle: format.quotes, trailingCommas: format['trailing-commas'] },
+            // Декораторы параметров (`constructor(@Inject(TOKEN) dep)`) Biome по умолчанию считает ошибкой разбора.
+            parser: { unsafeParameterDecoratorsEnabled: format['parameter-decorators'] },
+        },
         json: { formatter: { indentWidth: format.indent } },
         linter: { enabled: true, rules: linterRules },
         // Файлы отбирает раннер через git; интеграция Biome с VCS выключена, чтобы .gitignore не скрывал явно переданные файлы.

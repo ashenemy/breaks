@@ -34,6 +34,7 @@ describe('RULES_SCHEMA: умолчания', () => {
             indent: 4,
             'line-ending': 'lf',
             'line-width': 120,
+            'parameter-decorators': true,
             quotes: 'single',
             'trailing-commas': 'all',
         });

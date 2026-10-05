@@ -164,6 +164,21 @@ describe('BiomeGenerator', () => {
             join(root, 'src', 'sample.ts'),
             'export function sample(value: any): string {\n    return String(value);\n}\n',
         );
+        writeFileSync(
+            join(root, 'src', 'decorators.ts'),
+            [
+                'declare function Inject(token: symbol): ParameterDecorator;',
+                'const TOKEN = Symbol("token");',
+                'export class Service {',
+                '    public readonly dependency: object;',
+                '',
+                '    constructor(@Inject(TOKEN) dependency: object) {',
+                '        this.dependency = dependency;',
+                '    }',
+                '}',
+                '',
+            ].join('\n'),
+        );
 
         const biomeBin = join(WORKSPACE_ROOT, 'node_modules', '@biomejs', 'biome', 'bin', 'biome');
         const result = spawnSync(process.execPath, [biomeBin, 'lint', '--vcs-enabled=false', 'src/sample.ts'], {
@@ -172,5 +187,12 @@ describe('BiomeGenerator', () => {
         });
         expect(result.stdout + result.stderr).toContain('noExplicitAny');
         expect(result.status).toBe(1);
+
+        const decorators = spawnSync(process.execPath, [biomeBin, 'lint', '--vcs-enabled=false', 'src/decorators.ts'], {
+            cwd: root,
+            encoding: 'utf8',
+        });
+        expect(decorators.stdout + decorators.stderr).not.toContain('Decorators are not valid here');
+        expect(decorators.status).toBe(0);
     }, 60_000);
 });
